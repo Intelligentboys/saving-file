@@ -1,0 +1,38 @@
+clear,clc;
+n=input('ÊäÈë¾ØÕóµÄ½×Êý');
+A=rand(n);
+%A=complex(rand(n),rand(n));
+%A=A'*A;
+b=ones(n,1);
+sum=zeros(n,1);
+f=-1;
+for i=1:n
+    for j=1:n
+        if(i~=j)
+            sum(i)=sum(i)+abs(A(i,j));
+        end
+    end
+    A(i,i)=2*f*sum(i);
+    f=f*-1;
+end
+%D=diag(diag(A.^(-1)));
+%D=D.^(1/2);
+%C=D*A*D;
+%zz=eig(abs(eye(n)-C));
+e=10^-8;
+%[x1,k1]=Serial_GaBP(A,b,e,n);
+%[x2,k2]=jacobi(A,b,e,n);
+%[x3,k3]=gauss_seidel(A,b,e,n);
+%[x4,k4]=conjugate_gradient(A,b,e,n);
+%[x5,k5]=Nosym_parallel_GaBP(A,b,e,n);
+[x6,k6]=Nosym_serial_GaBP(A,b,e,n);
+[x7,k7]=N_s_G(A,b,e,n);
+%[x8,k8]=Parallel_GaBP(A,b,e,n);
+x=A\b;
+%norm(A*x1-b)
+%norm(A*x2-b)
+%norm(A*x3-b)
+%norm(A*x4-b)
+%norm(A*x5-b)
+%norm(A*x6-b)
+%norm(A*x7-b)
