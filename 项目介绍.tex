@@ -1,0 +1,293 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage[linesnumbered, ruled, lined,boxed,commentsnumbered]{algorithm2e}[1]
+\usepackage{amssymb}
+\usepackage{CTEX}
+\usepackage{caption}
+\usepackage{graphicx}   
+\usepackage{subcaption}
+\usepackage[left=1.70cm, right=1.70cm, top=2.00cm, bottom=2.00cm]{geometry} %页边距
+\captionsetup[figure]{font=small}
+\title{基于神经逆算子的电阻抗成像求解算法}
+\newtheorem{定理}{定理}[section]
+\begin{document}
+\author{邱德志 \and 许婷}
+\date{}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%摘要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}  
+	\begin{minipage}[c]{14cm}
+		\zihao{-5} \mbox{}\hspace{2.4em}{\heiti 摘要:}\quad
+			本项目研究神经网络在EIT问题中的图像反演, 由于EIT问题可以抽象为求解非线性算子到生物组织电导率的映射,因此致力于利用新的算子网络即神经逆算子来近似该映射以解决EIT问题. 数值结果表明，该网络在应对EIT问题时表现出较好的反演结果.
+			
+	\end{minipage}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%第一章，背景介绍
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{EIT问题}
+
+\subsection{背景介绍}
+电阻抗成像(Electrical impedance tomography, EIT)是一种无创、便携、实时的成像技术,通过在人体或物体表面施加低频电流并测量电极上的电压分布,重建内部电导率分布图像.
+EIT技术因其无辐射、非侵入性、成本低、响应快速等优点, 在医学、工业监测和地球物理勘探等领域具有广泛的应用前景. 在医学领域,EIT技术被广泛应用于肺部通气监测、心脏功能监测、脑部成像和胃肠动力监测等, 能够实时反映器官的生理和病理变化,对疾病的早期诊断和治疗具有重要意义.
+
+EIT的实现过程是: 将电极放置在身体表面,并在低于人类感知阈值的电极上施加低频电流. 这在电极上产生电压分布,然后就可以对其进行测量. 对一组指定的电流模式或每个电极的电流幅度重复测量操作, 可以得到的电流-电压图，以用来求解人体组织中的电导率系数.
+
+EIT数学上又称为逆电导率问题：给定在人体表面进行的电边界测量,恢复体内的电导率分布. 这是一个非线性且严重病态的问题, 即微小的测量误差可能导致所重建的电导率图像产生非常大的偏差. 此外, 最后, 电流主要通过物体表面流动,对内部结构的灵敏度较低, 影响成像分辨率. 从理论上可以证明,我们可以从人体的测量数据唯一地确定内部组织的电导率, 然而如何计算电导率以此重构图像却是一个困难的问题\cite{ref1}.
+
+\subsection{EIT数学模型}
+设$D\subset \mathbb{R}^d$为需要成像的生物组织，而$0<a\in C^2(D)$是内部组织的电导率，其中$d$为空间的维数. 则电势$u$满足偏微分方程(\ref{EIT偏微分方程})：
+\begin{equation}  \label{EIT偏微分方程}
+    \begin{cases}
+         -\triangledown \cdot \left(a(x) \triangledown u\right)=0,&\quad x\in D,\\
+         u(x)=f(x),&\quad x\in \partial D.
+    \end{cases}
+\end{equation}
+
+{\bf EIT中的正向问题可表述为}：
+给定区域$D$，电导率系数$a(x)$和Dirichlet条件$f(x)$, 求解边值问题(\ref{EIT偏微分方程}),并计算Neumann数据
+\begin{equation}
+    g=a \frac{\partial u}{\partial n},\quad x\in \partial D.
+\end{equation}
+众所周知，边值问题(\ref{EIT偏微分方程})是适定的，即固定区域$D\in C^{0,1}$和电导率系数$a\in L^\infty(D)$,  则对任意给定的Dirichlet边值函数的$f\in H^{\frac{1}{2}}(\partial D)$, 存在唯一的电势$u\in H^1(D)$，且有
+\[
+\|u\|_{H^1(D)}\leq c\|f\|_{H^{1/2}(\partial D)}.
+\]
+因此，也存在唯一的Neumann边值函数$g\in H^{-\frac{1}{2}}(\partial D)$, 且有
+\[
+\|g\|_{H^{-1/2}(\partial D)}\leq c\|u\|_{H^1(D)}\leq c\|f\|_{H^{1/2}(\partial D)}.
+\]
+因此可以定义从$H^{1/2}(\partial D)$到$H^{-1/2}(\partial D)$的线性算子，显然，对相同的$f\in H^{\frac{1}{2}}(\partial D)$，$a$不同，$u$也不同，因此该线性算子通常记作$\varLambda_a$，即
+\begin{align*}
+        \varLambda_a :H^{\frac{1}{2}}(\partial D)&\rightarrow H^{-\frac{1}{2}}(\partial D)\\
+        f(x)&\rightarrow g(x).
+\end{align*}
+由上面的不等式可知算子$\varLambda_a$是有界的. $\varLambda_a$通常称为D-N映射. 
+
+{\bf EIT中的逆向问题可表述为}：给定区域$D$和D-N映射$\varLambda_a$或数据对$\{f_i,g_i\}_{i=1}^\infty$，计算电导率$a$.
+
+EIT通常指的是该逆向问题. 现有研究结果表明，当电导率函数$a\in L^\infty(D)$时，完全的D-N映射$\varLambda_a$能唯一确定该电导率. 尽管如此，EIT是不稳定的，即$\varLambda_a$的微小变化能引起电导率$a$的巨大变化. 而且，实际问题中, 无法测量完全的D-N映射$\varLambda_a$或无穷对数据$\{f_i,g_i\}_{i=1}^\infty$，只能测量有限的数据对$\{f_i,g_i\}_{i\geqslant 1}$, 并以此确定D-N映射$\varLambda_a$和重构$a(x)$. 由于EIT问题的不适定性和非线性性, 传统数值方法计算量大, 计算时间长, 因此本项目设法通过新的神经网络来从$\varLambda_a$重构$a(x)$.这一方法的好处是只需要通过前期的训练得到模型,那么给定D-N映射$\varLambda_a$,就能通过模型快速计算出电导率系数$a(x)$.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%第二章，神经网络构建
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{神经网络构建}
+\subsection{介绍}
+在实际中, 一大类反问题都可以抽象为: 给定函数空间之间的映射, 以此求解出相关PDE中的系数, EIT问题便是其中的一个例子. 由于这些问题的解析解只在简单的情况下可用, 因此这一类反问题通常使用基于PDE约束优化的迭代数值算法来求解近似解. 然而, 这些传统数值算法的计算量十分庞大, 并且这些算法只能求解特定的问题, 难以进行推广.
+
+近年来,智能化图像重建算法是EIT技术中的重要研究方向, 它利用人工智能技术尤其是机器学习和深度学习方法, 来解决EIT中的图像重建问题. 这些算法通过自动学习数据中的复杂非线性关系, 显著提高了图像重建的质量和速度, 克服了传统数值化算法在处理非线性、病态性和欠定性问题时的局限性.
+
+近来, 深度学习技术在EIT图像重建中取得了显著进展. 卷积神经网络(Convolutional neural Network, CNN)通过卷积层、池化层和全连接层提取图像的空间特征, 能够有效处理EIT数据中的空间信息. 循环神经网络(Recurrent neural network, RNN), 特别是长短期记忆网络(Long short-term memory, LSTM)和门控循环单元(Gated recurrent unit, GRU), 能够处理时间序列数据, 捕捉电压和电导率之间的时序依赖关系. 此外, 生成对抗网络(Generative adversarial network, GAN)通过生成器和判别器的对抗训练, 生成高质量的EIT图像. 多模态学习算法结合几何结构信息和电导率信息, 通过特征融合提高图像重建的质量.
+
+最新的研究进展包括深度学习与传统算法的结合, 发挥各自的优势,例如基于MMV-Net的多频EIT成像算法结合了传统MMV-ADMM算法和深度学习网络的优点. 三维成像技术的发展也备受关注, 从二维成像扩展到三维成像, 以更全面地反映人体内部结构. 此外, 实时性优化也是重要的研究方向, 进一步优化算法以提高图像重建的速度, 满足实时监测的需求.
+
+本项目目标是通过神经网络技术, 给定的D-N映射$\varLambda_a$, 反演出人体组织的电导率$a(x)$. 在实际应用中, D-N映射可以通过对人体施加测量电压并测量电流大小得到$\{f_i(x),g_i(x)\}$, 最后通过有限元得到D-N映射矩阵$\varLambda_a$. 具体过程参考3.2小节.
+下面介绍本项目所使用网络的具体构建, 该网络由两个算子网络集合而成, 并使用合成的网络来解决EIT问题.
+
+\subsection{DeepONet}
+    深度算子网络(Deep operator network, DeepONet)的构建结构如下(\cite{ref2})：
+    \begin{equation}  \label{DON结构}
+        \mathcal{N}^{\text{DON}}(\bar{u} )(y)=\sum_{k=1}^p \beta_k({\bar{u}})\tau_k(y),\quad \bar{u}\in\mathcal{X}(D),y\in U,
+    \end{equation}
+其中$D\subset\mathbb{R}^{d_x},U\subset\mathbb{R}^{d_u} ,\mathcal{X}(D)$是合适的函数空间.考虑$\mathcal{E} (\bar{u})= (\bar{u}(x_1),\dots,\bar{u}(x_m))$是$\bar{u}$在$(x_1,\dots,x_m)$的值,那么分支网络$\beta$定义为
+\begin{align*}
+    \beta:\mathbb{R}^m&\rightarrow \mathbb{R}^p\\
+    \mathcal{E}(\bar{u}) &\rightarrow (\beta_1(\mathcal{E}(\bar{u})),\dots,\beta_p(\mathcal{E}(\bar{u}))),
+\end{align*}
+而主干网络$\tau$定义为
+\begin{align*}
+    \tau:U&\rightarrow \mathbb{R}^p\\
+    y &\rightarrow (\tau_1(y),\dots,\tau_p(y)).
+\end{align*}
+因此, DeepONet将分支网络(作为系数函数)和主干网络(为基函数)组合在一起, 以创建函数之间的映射. 该算子的构建来源于算子广义近似定理.
+
+\begin{定理}[算子广义近似定理]
+    假设$\sigma$是一个连续非多项式函数, $X$是Banach空间, $K_1\subset X, K_2\subset \mathbb{R}^d$,分别是$X$和$\mathbb{R}^d$中的两个紧集. $V$是$C(K_1)$中的紧集, $G$是$V$到$C(K_2)$上的非线性连续算子. 对任意的$\varepsilon>0$, 存在正整数$n,p,m$, 以及实数$c_i^k,\xi_{ij}^k,\theta_i^k,\zeta_k,\omega_k\in \mathbb{R}^d,x_j\in K_1,i=1,\ldots,n,k=1,\ldots,p,j=1,\ldots,m$, 满足
+    \begin{equation}
+        \left|  G(u)(y)-\sum_{k=1}^{p}\sum_{i=1}^{n} c_i^k \sigma \left( \sum_{j=1}^{m}\xi_{ij}^k u(x_j)+\theta_i^k \right) \sigma\left( \omega_ky+\zeta_k \right)  \right|<\varepsilon.
+    \end{equation}
+\end{定理}
+理论上,(\ref{DON结构})中的网络可以逼近任意满足定理2.1的非线性连续算子.
+
+\subsection{FNO}
+Fourier神经算子(Fourier network operator, FNO)的构建结构如下(\cite{ref4}):
+\begin{equation}
+    \mathcal{N}^{\text{FNO}}=\mathcal{Q} \circ \mathcal{L}_T\dots \mathcal{L}_1\circ\mathcal{R}.
+\end{equation}
+式中算子$R$通常由浅层全连接神经网络参数化; 算子$\mathcal{Q}$是一个非线性投影, 由浅层神经网络实例化; 而隐藏层$\mathcal{L}_k:v^k(x)\rightarrow v^{k+1}(x)$被定义为
+\begin{equation}
+    v^{k+1}(x)=\sigma\left(W_k\cdot v^k(x)+b_k(x)+(\mathcal{K}_k v^k)(x)\right),
+\end{equation}
+其中$W_k\in \mathbb{R}^{d_v\times d_v}$是权重矩阵, $b_k$为偏置函数, $\sigma(\cdot)$为激活函数以及非局部傅里叶变换
+\begin{equation}
+    \mathcal{K}_kv^k=\mathcal{F}_N^{-1}(P_k(n)\cdot\mathcal{F}_Nv^k(n)).
+\end{equation}
+上式中，$\mathcal{F}_Nv^k(n)$表示$v^k$的离散Fourier变换(Discrete Fourier transform, DFT)的Fourier系数; $P_k(n)\in \mathbb{R}^{d_v\times d_v}$是复数傅里叶乘法矩阵, $F_N^{-1}$为离散傅里叶逆变换.
+
+\subsection{NIO}
+神经逆算子(Neural inverse opterator, NIO)的构建由2.1的DeepONet和2.2的FNO两个网络结合而成：
+\begin{equation*}
+    \mathcal{N}^{\text{NIO}}:\left(
+        \begin{array}{c}
+            z\\
+            \{\Psi_l\}_{l=1}^L
+        \end{array}
+    \right)\mapsto 
+    \left(
+        \begin{array}{c}
+            \{\tau_k (z)\}_{k=1}^p\\
+            \{\beta_k \}_{k=1}^p
+        \end{array}
+    \right)\mapsto
+    \{f_l(z)\}_{l=1}^L
+    \mapsto
+    h(z)
+    \mapsto  
+    a^*(z),
+\end{equation*}
+其中, $h(z)$可以显示的写成
+\begin{equation*}
+    R(f_1,\ldots ,f_l,z)=\frac{D}{L}\sum_{l=1}^L f_l +Ez,
+\end{equation*}
+$E,D\in \mathbb{R}^{d_v}$. 
+
+NIO的具体结构如图\ref{NIO结构}所示. 我们在训练过程中,选择$L=4,p=100,d_v=32,k=25$.
+\begin{figure}
+    \centering
+    \includegraphics[width=16.6cm]{NIORB.png}
+    \caption{神经逆算子NIO的结构}
+    \label{NIO结构}
+\end{figure}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%第三章，数据构建
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\section{数据构建}
+\subsection{心肺区域电导率的构建}
+
+本项目考虑单位圆内的心肺组织电导率, 其中肺部区域和心脏区域分别为参数不同的椭圆, 该参数是随机的, 用以模拟人体差异. 但是参数的方差较小, 因为不同的人体虽有差异, 但差异不应过大.
+不同组织的电导率也应该不同, 在本项目中, 肺部的电导率大约为0.8,心脏的电导率约为2, 该数值也同样通过加入高斯噪声随机化, 背景的电导率则固定为1. 在\cite{ref1}中, 通过使用256阶的方阵来存储单位圆组织上的电导率, 但是方阵中单位圆外存有大量的NaN元素, 这就使得数据的存储效率低.
+
+而在\cite{ref5}的模型中, 心肺区域数据使用70阶的方阵进行存储,对应一个单位圆中不同位置的电导率系数，因此需要通过极坐标变换还原真实图像. 矩阵同一列中的元素对应相同半径不同角度的位置的电导率系数, 同一行元素对应相同角度不同半径的位置的电导率系数.假设矩阵的阶数为$n$行$m$列, 那么第$i$行第$j$列的元素$a_{ij}$在圆上对应的坐标为$(j\sin( 2\pi i/n)/m ,j\cos (2\pi i/n)/m )$.这样就不会出现NaN元素, 提高了存储效率.
+
+\subsection{D-N映射的构建}
+D-N映射的构建是一个重点, 首先需要明确的是, 当电导率$a(x)$确定时, D-N算子$\varLambda_a$是线性有界算子, 如果再将其限制在有限维空间上, 那么我们就可以使用矩阵代替D-N映射.
+构建D-N映射需要通过有限元构建多组数据$\{f_i(x),g_i(x)\}_{i\geqslant 1}$. 于$g_i(x)$的计算还涉及到了数值微分, 因此\cite{ref1}中的策略是构建N-D映射矩阵, 再通过求逆来得到D-N映射, 下面简单介绍一下求解N-D映射的过程.
+\begin{enumerate}
+    \item \textbf{选择Fourier基函数}\\
+    在单位圆边界 \(\partial\Omega\), 采用截断的Fourier基函数:
+    \[
+    g_n(\theta) = (2\pi)^{-1/2} e^{in\theta}, \quad n \in \{-N, \ldots, -1, 1, \ldots, N\}.
+    \]
+排除常数项$n=0$(因N-D算子要求零均值条件  \(\int_{\partial\Omega} u \, ds = 0\)).
+
+    \item \textbf{求解Neumann问题 (有限元实现)}\\
+    对每个非零波数$n$求解Neumann边值问题:
+    \[
+    \nabla \cdot a \nabla u_n = 0 \quad \text{in} \quad \Omega, \quad \sigma \left.\frac{\partial u_n}{\partial \nu}\right|_{\partial\Omega} = g_n
+    \]
+    加上约束条件$\int_{\partial\Omega} u_n \, ds = 0$, 确保解唯一.
+
+    \item \textbf{提取边界电势}\\
+    在有限元求解完成后, 可以直接在边界提取Dirichlet数据$f_n (n\in \{-N, \ldots, -1, 1, \ldots, N\})$, 其为$u(x)$在边界测量点$n$处的值, 这一过程显然是稳定的, 因为这样无需求解数值微分, 这样就得到电势函数在边界上的值$u_n|_{\partial\Omega}$.
+
+    \item \textbf{投影到Fourier基}\\
+    计算\(u_n|_{\partial\Omega}\) 在Fourier基上的投影系数:
+    \[
+    \hat{u}_n(m) = \langle u_n|_{\partial\Omega}, g_m \rangle = \frac{1}{\sqrt{2\pi}} \int_0^{2\pi} u_n(\theta) e^{-im\theta} \, d\theta
+    \]
+    这里需要采用数值积分的方式来得到$\hat{u}_n(m)$.
+
+    \item \textbf{构建N-D矩阵 \( R_a \)}\\
+    矩阵元素定义为:
+    \[
+    (R_a)_{m,n} = \hat{u}_n(m)
+    \]
+    得到\(2N \times 2N\)的N-D矩阵.最后,再通过对$R_a$矩阵求逆即可得到$\varLambda_a$矩阵.
+\end{enumerate}
+心肺区域以及D-N矩阵数据构建可以访问https://epubs.siam.org/doi/book/10.1137/1.9781611972344进行程序下载来复现.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=17cm]{Figure_3.png}
+    \caption{通过构建DtoN映射$\Lambda_a$, 使用NIO神经网络反演生物组织电导率$a(x)$}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%第四章，模型训练
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{模型训练}
+    
+    \subsection{训练细节}
+    我们选用了4096个样本进行模型训练, 每个样本包含33阶的算子矩阵, 以及对应的70阶心肺电导率矩阵, 其中算子矩阵的第17行与17列均为0, 因此在训练时会删除17行与17列. 对于不同的样本, 心肺的位置参数加上了高斯噪声, 导致样本的心肺结构不完全相同. 另外, 所有样本的心肺电导率系数也在加上了高斯噪声, 以此提高模型的泛化能力. 损失函数选用$L_1$损失函数、学习率为$0.001$、最大迭代轮次为$1000$, 每个轮次迭代$256$次.
+    
+    在训练之前,需要将训练样本归一标准化. 假设$x$为矩阵中的元素, 那么对其归一化后得到的$\tilde{x} $可以表示为
+    \begin{equation*}
+        \tilde{x}=2\frac{x-m}{M-m}-1，
+    \end{equation*}
+    其中$M, m$分别为所有样本数据中$x$的最大值和最小值.
+
+    \subsection{训练结果}
+    我们选取了两个样本来验证模型的效果, 图\ref{对比图像}所示是迭代了4个轮次所得模型的预测结果. 可以看到在这两个样本上模型的训练效果较好, 能够反映图像的大致结构, 并且数值上的拟合效果也较好. 同时, 模型在训练完成后, 所需的预测时间很短, 对比传统算法展现出来很高的效率.
+
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=7cm]{Figure_1.png}
+        \caption{测试样本1真实图像}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=7cm]{Figure_2.png}
+        \caption{测试样本1预测图像}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=7cm]{Figure_5.png}
+        \caption{测试样本2真实图像}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=7cm]{Figure_4.png}
+        \caption{测试样本2预测图像}
+    \end{subfigure}
+    \caption{(a)图为测试样本1的真实心肺区域图像, 肺部区域的电导率为0.754(黑色区域), 心脏区域的电导率为2.155(白色区域), 其他组织的电导率为1(红色区域). (b)图为预测样本1通过NIO模型反演得到的图像. (c)图为测试样本2的真实图像, 其中心脏区域的电导率为1.994(白色区域), 肺部区域的电导率为0.698(黑色区域), 其他组织的电导率为1. (d)图为预测样本2通过NIO模型反演得到的图像. 可以看到两个样本图像的数值预测效果较好, 且能够反演出图像的大致结构.}
+    \label{对比图像}
+\end{figure}
+
+\section{总结}
+可以看到NIO神经网络对于心肺区域的数值反演表现出很好的结果, 此外NIO神经网络能够较好地近似一类非线性映射. 由于许多反问题都能抽象寻找算子与方程系数之间的映射, 因此该网络能够推广到更大的应用场景中. 后期我们将试图使用该网络求解其他反问题中,也可以试图将该网络涵盖到所有问题中,即训练一个网络来求解类型不同的一系列问题.
+
+
+\begin{thebibliography}{0}
+    \bibitem{ref1} Muller J, Siltanen S. Linear and nonlinear inverse problems with practical applications[M]. Philadelphia: SIAM, 2012.
+    \bibitem{ref2} Lu L, Jin P, Pang G, et al. Learning nonlinear operators via DeepONet based on the universal approximation theorem of operators[J]. Nature Machine Intelligence, 2021, 3(3): 218-229.
+    \bibitem{ref3} Chen T, Chen H. Universal approximation to nonlinear operators by neural networks with arbitrary activation functions and its application to dynamical systems. IEEE Trans, Neural Networks 1995,6: 911–917.
+    \bibitem{ref4} Li Z, Kovavhki N, Azizzadenesheli K, et al. Fourier neural operator for parametric partial differential equations[C]// Proceedings of the International Conference on Learning Representations, 2021a.
+    \bibitem{ref5} Molinaro R, Yang Y, Engquist B, et al. Neural Inverse Operators for Solving PDE Inverse Problems[EB/OL]. arXiv:2301.11167 [2023-01-26]
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,139 @@
+\documentclass{article}
+\usepackage[UTF8]{ctex}
+\usepackage{amsmath}
+\usepackage[left=1.70cm, right=1.70cm, top=2.00cm, bottom=2.00cm]{geometry} %页边距
+
+\begin{document}
+    {\centering \heiti \large 内容仅供参考\\}
+    % 第一部分
+$\left.\right.$\\
+一、\\I)a.略.\\
+b.局部截断误差略，见课件.\\
+II)a.四阶龙格库塔公式（RK4），优：精度高；劣：计算量大。\\
+b.考虑
+\begin{align*}
+    y_{n+1}^* =& y(x_n) + \frac{h}{6}\left[\right.2f(x_n, y(x_n)) + 3f(x_n+\frac{5}{6}h, y(x_n)+\frac{5}{6}hf(x_n, y(x_n)))\\ & + f(x_n+\frac{5}{6}h, y(x_n)+\frac{5}{6}hf(x_n, y(x_n)))\left.\right]
+\end{align*}
+其中
+\begin{align*}
+    &f(x_n+\frac{5}{6}h, y(x_n)+\frac{5}{6}hf(x_n, y(x_n)))\\
+    =&f(x_n, y(x_n)) + f_x(x_n, y(x_n))\frac{5}{6}h + f_y(x_n, y(x_n))\frac{5}{6}hf(x_n, y(x_n)) + O(h^2)
+\end{align*}
+因此
+\begin{equation*}
+    y_{n+1}^* = y(x_n) + f(x_n, y(x_n))h + \frac{h^2}{2}[f_x(x_n, y(x_n)) + f_y(x_n, y(x_n))f(x_n, y(x_n))] + O(h^3)
+\end{equation*}
+而
+\begin{equation*}
+    y(x_{n+1}) = y(x_n) + f(x_n, y(x_n))h + \frac{h^2}{2}[f_x(x_n, y(x_n)) + f_y(x_n, y(x_n))f(x_n, y(x_n))] + O(h^3)
+\end{equation*}
+则 \( y(x_{n+1}) - y_{n+1}^* = O(h^3) \).格式具有二阶精度。\\[2cm]
+
+% 第二部分
+$\left.\right.$\\二、\\I) a. 古典隐式差分格式为：
+\[ 
+-\alpha r U_{m+1}^{n+1} + (1 + 2\alpha r)U_m^n - \alpha r U_{m-1}^n = U_m^n 
+\]
+写成矩阵形式为：
+\begin{equation*}
+    \overbrace{\begin{pmatrix}
+     1+ 2\alpha r & -\alpha r \\
+    -\alpha r & 1 + 2\alpha r & \ddots \\
+    & \ddots & \ddots & -\alpha r \\
+    &&-\alpha r& 1 + 2\alpha r
+    \end{pmatrix}}^C
+    \begin{pmatrix}
+    U_1^{n+1} \\
+    U_2^{n+1} \\
+    \vdots \\
+    U_M^{n+1}
+    \end{pmatrix}=
+    \begin{pmatrix}
+    U_1^n \\
+    U_2^n \\
+    \vdots \\
+    U_M^n
+    \end{pmatrix}
+    +
+    \begin{pmatrix}
+    \alpha r U_0^n \\
+    0 \\
+    \vdots \\
+    0 \\
+    \alpha r U_M^n
+    \end{pmatrix}
+\end{equation*}
+其中$C$的特征值为$\lambda_j = 1 + 2\alpha r(1 + \cos \frac{j\pi}{M+1}), j = 0, 1, ..., M.$显然 \(\lambda_c \geq 1\).则 $C^{-1}$ 的特征值满足 \(0 < \lambda_{c^{-1}} \leq 1\).
+由于$C^{-1}$为正规矩阵(对称)，因此格式无条件稳定.\\
+b.CN格式即可\\
+II)a.见课本103页  b.见课本107页
+
+$\left.\right.$\\
+三、\\从五点差分格式出发：
+\begin{equation*}
+    4U_{m,l}-U_{m+1,l}-U_{m-1,l}-U_{m,l+1}-U_{m,l-1}=0
+\end{equation*}
+由于下边界和左边界都是狄利克雷边值，因此下边界写为：
+\begin{equation*}
+    4U_{m,1}-U_{m+1,1}-U_{m-1,1}-U_{m,2}=h_{m,0}
+\end{equation*}
+左边界：
+\begin{equation*}
+    4U_{1,l}-U_{2,l}-U_{1,l+1}-U_{1,l-1}=h_{0,l}
+\end{equation*}
+右边界为Robin边值，写成差分格式为：
+\begin{equation*}
+    \frac{U_{M+1,l}-U_{M-1,l}}{2h}-p_lU_{M,l}=f_l
+\end{equation*}
+结合五点差分格式消去$U_{M+1,l}$，得到右边界的差分格式为：
+\begin{equation*}
+    \left(4-2hp_l\right)U_{M,l}-2U_{M-1,l}-U_{M,l+1}-U_{M,l-1}=2hf_l
+\end{equation*}
+对于左边界的Neumann边值，使用下面的差分格式近似法向导数：
+\begin{equation*}
+    \frac{U_{m,M+1}-U_{m,M-1}}{2h}=g_m
+\end{equation*}
+结合五点差分格式消去$U_{m,M+1}$得到上边界的差分格式
+\begin{equation*}
+    4U_{m,M}-U_{m+1,M}-U_{m-1,M}-2U_{m,M-1}=2hg_m
+\end{equation*}
+类似地，结合四个边界的差分格式，得到端点处的差分格式分别为
+\begin{equation*}
+    4U_{1,1}-U_{2,1}-U_{1,2}=h_{1,0}+h_{0,1} \quad  \text{(左下角)}
+\end{equation*}
+\begin{equation*}
+    (4-2hp_1)U_{M,1}-2U_{M-1,1}-U_{M,2}=h_{M,0}+2hf_1 \quad \text{(右下角)}
+\end{equation*}
+\begin{equation*}
+    4U_{1,M}-U_{2,M}-2U_{1,M-1}=2hg_m+h_{0,M} \quad \text{(左上角)}
+\end{equation*}
+\begin{equation*}
+    (4-2hp_M)U_{M,M}-2U_{M-1,M}-2U_{M,M-1}=2hf_M+2hg-M \quad \text{(右上角)}
+\end{equation*}
+将上面的差分格式写成矩阵形式即为
+\begin{equation*}
+    AU=g
+\end{equation*}
+其中$U={U_{1,1},\cdots,U_{M,1};U_{1,2},\cdots,U_{M,2},\cdots,U_{1,M},\cdots,U_{M,M}}^T$，矩阵$A$为$M^2$阶方阵，其矩阵结构如下：
+\begin{equation*}
+    A=\begin{pmatrix}
+     E_1 & -I \\
+    -I & E_2 & -I \\
+    & \ddots & \ddots & \ddots \\
+    &&-I& E_{M-1}&-I\\
+    &&&-2I&E_M
+    \end{pmatrix}
+\end{equation*}
+其中
+\begin{equation*}
+    E_l=\begin{pmatrix}
+     4 & -1 \\
+    -1 & 4 & -1 \\
+    & \ddots & \ddots & \ddots \\
+    &&-1& 4&-1\\
+    &&&-2&4-2hp_l
+    \end{pmatrix}
+    \quad (l=1,\cdots,M)
+\end{equation*}
+$g$由格式易得。
+\end{document}

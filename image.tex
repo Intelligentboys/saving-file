@@ -1,0 +1,156 @@
+\documentclass[a4paper,11pt,onecolumn,twoside]{ctexart}
+\usepackage[UTF8]{ctex}
+\usepackage{hyperref}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,fancyhdr}
+\usepackage{epsfig,graphicx,picins,picinpar,subfigure}
+\usepackage{pstricks}
+\usepackage{fancyvrb}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usepackage[linesnumbered, ruled, lined,boxed,commentsnumbered]{algorithm2e}[1]
+\usepackage{caption}
+\usepackage{graphicx}   % 导入图片
+\usepackage{hyperref}
+\usepackage{authblk}
+\usepackage{fancyvrb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage[
+    textwidth=14.8cm,
+    textheight=21.5cm,
+    top=0cm,
+    left=0cm,
+    right=0cm,
+    footskip=0cm
+]{geometry}
+\setlength{\headsep}{0.5cm}
+\setcounter{page}{1}
+\pagestyle{fancy} \fancyhf{}
+\newtheorem{mythrm}{定理}
+\hypersetup{colorlinks=false,pdfborder={0 0 0},}
+
+\begin{document}
+许多几何问题可以使用复数简单地进行解决，第一次使用复数在几何方面取得重要
+成果的人是高斯，他利用复数证明了正十七边形可以使用尺规作图画出。下面我们给出一个例子
+以突显复数在解决几何难题的重要作用。\\
+
+\textbf{问题} \quad
+设$z_1,z_2,\cdots,z_n$是以原点为圆心的单位圆上的$n$个点$\left(n>2\right)$。如果$z_1,z_2,\cdots,z_n$
+是正$n$边形的$n$个顶点，证明$z_1+z_2+\cdots+z_n=0$。\\
+
+仔细分析这一问题，这里的$z_1+z_2+\cdots+z_n$是复平面的$n$个点相加。要想解决这一问题，
+我们需要介绍几个基本的概念：
+
+我们知道如果想要在复平面上确定一个复数，那么我们需要知道这一复数的实部和虚部。因此复数可以由
+以下形式来表达：
+\begin{equation}\label{复数的代数形式}
+    z=x+iy   
+\end{equation}
+其中$i\triangleq\sqrt{-1}$。我们称$\left(\ref{复数的代数形式}\right)$式为复数的代数表示形式，$x$和$y$分别
+被称为复数的实部和虚部。
+
+类似地，复平面的复数可以使用类似极坐标的形式来表示，即当我们知道一个复数在复平面上相对$O$点的长度（一般称之为\textbf{模}）,以及$O$点到该复数组成的射线相对于
+实轴正半轴的角度（一般称之为\textbf{辐角}），那么我们就能在复平面上唯一确定一个复数。因此复数还可以由以下形式来表示：
+\begin{equation}  \label{复数的指数形式}
+    z=re^{i\theta}
+\end{equation}
+其中,$e$为自然指数，$r$表示复数的模，$\theta$表示复数的辐角，上式被称为复数的指数形式。有了这一形式，下面我们给出一个关于复数的重要定理：
+
+\begin{mythrm}
+在复数域有如下等式：
+\begin{equation} \label{欧拉公式}
+    e^{i\theta}=\cos\theta+i\sin\theta
+\end{equation}
+\end{mythrm}
+\begin{proof}
+    依次考虑函数$\cos x,\sin x,e^x$的泰勒展开：
+    \begin{equation}\label{余弦函数的泰勒展开}
+        \cos x=\sum_{n=0}^{+\infty}{\left(-1\right)}^n\frac{x^{2n}}{\left(2n\right)!}
+    \end{equation}
+    \begin{equation}\label{正弦函数的泰勒展开}
+        \sin x=\sum_{n=0}^{+\infty}{\left(-1\right)}^n\frac{x^{2n-1}}{\left(2n-1\right)!}
+    \end{equation}
+    \begin{equation}\label{自然指数函数的泰勒展开}
+        e^x=\sum_{n=0}^{+\infty}\frac{x^n}{n!} 
+    \end{equation}
+    我们将$x=i\theta$带入$\left(\ref{自然指数函数的泰勒展开}\right)$式可以得到：
+    \begin{equation}
+        e^{i\theta}=\overbrace{\sum_{n=0}^{+\infty}{\left(-1\right)}^n\frac{\theta^{2n}}{\left(2n\right)!}}^{\cos\theta}+i\overbrace{\sum_{n=0}^{+\infty}{\left(-1\right)}^n\frac{\theta^{2n-1}}{\left(2n-1\right)!}}^{\sin\theta}
+    \end{equation}
+    由此我们得到：
+    \begin{equation*}
+        e^{i\theta}=\cos\theta+i\sin\theta
+    \end{equation*}
+    即为$\left(\ref{欧拉公式}\right)$,证毕。
+\end{proof}
+第一个发现该等式且给出证明的是欧拉，因此该公式也被称之为\textbf{欧拉公式}。限于篇幅，我们给出了这一定理的一个不太严谨的证明。这一定理将复数的代数形式和指数形式相结合，得到了
+一个新的复数表示形式：
+\begin{equation} \label{复数的三角形式}
+    z=r\left(\cos\theta+i\sin\theta\right)
+\end{equation}
+$\left(\ref{复数的三角形式}\right)$式被称为复数的三角形式。
+
+在实际应用中，我们可以根据实际需要来灵活运用和转化三种不同的复数表达形式，以此来减轻工作量。\\
+\begin{figure}[h]
+    \begin{center}
+        \begin{tikzpicture}
+            \draw[->](0,0)--(5,0);
+            \draw[->](2.5,-2.5)--(2.5,2.5);
+            \draw[->](2.5,0)--(4.2,1.5);
+            \draw(2.8,0) arc (0:40:0.3);
+            \node[left]at(2.5,-0.3){$O$};
+            \node[right]at(5,0){$x$};
+            \node[above]at(2.5,2.5){$y$};
+            \node[above]at(3.1,0){$\theta$};
+            \node[centered]at(3.5,1.1){$r$};
+            \node[centered]at(4.5,1.8){$z$};
+        \end{tikzpicture}
+    \end{center}
+    \caption{复数$z$的辐角和模长}
+\end{figure}
+
+在引入了关于复数的表达形式以及欧拉公式之后,我们给出一个解决问题的重要定理：\\
+
+\begin{mythrm} \label{定理二}
+    对于一元方程$z^n=\zeta,\zeta=re^{i\theta}\in \mathbb{C}\left(\zeta\neq 0,n>0\right) $,其在复数域上一定存在n个互不相等的根$z_1,z_2,\cdots,z_n$，且
+    这些根满足：
+    \begin{equation} \label{一元方程的根}
+        z_k=\sqrt[n]{r}e^{i\frac{\theta +2k\pi}{n}} \quad k=0,1,2,\cdots,n-1
+    \end{equation}
+\end{mythrm}
+\begin{proof}
+    由$\zeta=re^{i\theta}$可知，复数$\zeta$的模长为$r$,辐角为$\theta$。
+    对于任一复数$z=r_0e^{i\theta_0}$，由复数的指数表达进行计算可知:
+    \begin{equation*}
+        z^n=r_0^ne^{in\theta_0}
+    \end{equation*}
+    此时，$z^n$的辐角变为原来的$n$倍，模长为原来的$n$次方。
+    由此可知，若对一个复数进行$n$次方运算，其模长变成了$r$,辐角变成了$\theta$，则该复数的模长
+    应该为$\sqrt[n]{r}$,其辐角应该为$\frac{\theta +2k\pi}{n}$。这样的复数有无穷多个，但考虑
+    到由于$k$的选取会导致一部分复数在复平面上的位置完全重复，因此这些复数可以分成$n$类，我们可以从这些类
+    中选取较为简单的一些，即为$k=0,1,2,\cdots,n-1$的情况，因此结论成立。
+\end{proof}
+如果当$n>2$时观察$\left(\ref{一元方程的根}\right)$中$n$个根在复平面上的位置，很容易注意到以这$n$个根为顶点可以组成一个正$n$边形。
+由此，我们来考虑最开始的问题：
+\begin{proof}
+    由于$z_1,z_2,\cdots,z_n$为正$n$边形的$n$个顶点,且这$n$个点分布在复平面的单位圆周上,不失一般性地，我们令：
+    \begin{equation}
+    z_k=e^\frac{\theta+2k\pi}{n} \quad k=1,2,\cdots,n
+    \end{equation}
+    显然，这$n$个复数为多项式$z^n=e^{i\theta}$的$n$个互异的根。因此
+    \begin{equation}  \label{因式分解}
+    z^n-e^{i\theta}=\prod_{k=1}^{n}\left(z-z_k\right)
+    \end{equation}
+    分析$\left(\ref{因式分解}\right)$式,左式是一个$n$次多项式，且该多项式除了$n$次项以及$0$次项之外，其他项的系数都为$0$。
+    右式也一样为一个$n$次多项式,我们只考察其$n-1$次方项，很容易得到右式的$n-1$次方项为：
+    \begin{equation}
+        a_{n-1}=-\sum_{k=1}^{n}z_k
+    \end{equation}
+    由于左右两个多项式相等，则右式的$n-1$次项也应该为$0$，即
+    \begin{equation}
+        \sum_{k=1}^{n}z_k=0
+    \end{equation}
+\end{proof}
+\end{document}
