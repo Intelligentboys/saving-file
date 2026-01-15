@@ -1,0 +1,1462 @@
+\documentclass{article}
+\usepackage[UTF8]{ctex}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage[left=1.70cm, right=1.70cm, top=2.00cm, bottom=2.00cm]{geometry} %页边距
+
+\newtheorem{定理}{定理}[section]
+\newtheorem{命题}{命题}[section]
+\newtheorem{定义}{定义}[section]
+\numberwithin{equation}{section}
+\title{Reimann积分意义下部分函数的傅里叶级数的收敛性讨论}
+\author{082210219邱德志 \and 082210214刘漭}
+\date{\today}
+\captionsetup[figure]{font=small}
+ 
+\begin{document}
+
+    \setlength{\columnwidth}{17.6cm}
+
+    %封面题目部分:
+    \maketitle
+
+    %摘要部分：
+    \begin{center}  
+		\parbox{\textwidth}{  {\heiti 摘~~~要：} {\kaishu 本文引入卷积与好核的概念，说明了函数的傅里叶级数可以视为Dirichlet核与函数的卷积形式以及Dirichlet核并非一个好核。通过讨论函数与费耶尔核的卷积，了解到连续函数的傅里叶级数在切萨罗意义下收敛。根据狄利克雷定理，我们得以了解到一个连续可微的周期函数的傅里叶级数一定是一致收敛到原函数的。紧接着针对分段连续可微函数，介绍了Gibbs现象，即傅里叶级数$n$阶部分和在间断点附近产生震荡，而且振幅不会随着部分和阶数$n$的增加而减少。而对于仅有连续性的函数，通过处处连续且处处不可导函数的构造，其傅里叶级数处处不收敛，从侧面印证了傅里叶级数的收敛性是一个相当复杂的问题。文章的最后，我们介绍了傅里叶级数在解物理波动方程以及巴塞尔方程上的应用。}\\{\heiti 关键字：}{\kaishu 好核，傅里叶级数，收敛性分析，Gibbs现象，处处连续处处不可导函数，波动方程。}\\[0.6cm]}  
+	\end{center}
+
+    %第一章内容
+    \section{预备知识}
+    本章我们给出一些基础知识和概念，这些概念在傅里叶分析中经常使用，在后面的定理证明中需要用到其中的概念和结论来辅助证明，因此这些基本的概念是十分重要的。
+        \subsection{函数的连续性}
+
+        \begin{定义}
+            设函数$f$在某邻域$U(x_0)$上有定义，如果
+            \begin{equation*}
+                \lim_{x\to x_0}f(x)=f(x_0)
+            \end{equation*}
+            则称$f$在点$x_0$处连续。
+        \end{定义}
+
+        \begin{定义}
+            设函数在某$U_+(x_0)\left(U_-(x_0)\right)$有定义，若
+            \begin{equation*}
+                \lim_{x\to x_0^+}f(x)=f(x_0) \quad \left(\lim_{x\to x_0^-}f(x)=f(x_0)\right)
+            \end{equation*}
+            则称$f$在点$x_0$处右(左)连续。
+        \end{定义}
+
+        \begin{定义}
+            设函数在某$U^\circ (x_0)$有定义，若$f$在$x_0$处无定义，或$f$在$x_0$处有定义但不连续，在称$x_0$为函数$f$的间断点和不连续点。
+        \end{定义}
+        根据情形的不同，间断点可分为三类：\\
+        (1)若$\lim_{x\to x_0}=A$，而$f$在点$x_0$处无定义，或有定义但$f(x_0)\neq A$，则称点$x_0$为$f$的可去间断点。\\
+        (2)若函数$f$在点$x_0$处左、右极限都存在，但
+        \begin{equation*}
+            \lim_{x\to x_0^+}f(x)\neq \lim_{x\to x_0^-}f(x)
+        \end{equation*}
+        则称点$x_0$为函数$f$的跳跃间断点。\\
+        (3)函数的其他所有形式的间断点，即使得函数至少有一侧极限不存在的那些点被称为第二类间断点。
+
+
+        \subsection{函数项级数}
+
+        
+        
+        \begin{定义}
+            设${u_n(x)}$是定义在数集$E$上的一个函数列，表达式
+            \begin{equation}   \label{函数项级数}
+                u_1(x)+u_2(x)+\cdots+u_n(x)+\cdots,\quad x\in E
+            \end{equation}
+            称为定义在$E$上的函数项级数，记作$\displaystyle \sum_{n=1}^{\infty}u_n(x)$或$\sum u_n(x)$，称
+            \begin{equation}   \label{部分和函数列}
+                S_n(x)=\sum_{k=1}^{n}u_k(x)
+            \end{equation}
+            为函数项级数\textnormal{(\ref{函数项级数})}的部分和函数列。
+        \end{定义}
+        若$x_0\in E$，数项级数
+        \begin{equation}  \label{x0处的函数项级数}
+            u_1(x_0)+u_2(x_0)+\cdots+u_n(x_0)+\cdots
+        \end{equation}
+        收敛，即极限$\displaystyle \sum_{k=1}^{\infty}u_k(x_0)$存在，则称级数(\ref{函数项级数})在$x_0$处收敛，否则称级数在$x_0$处发散。
+        若级数(\ref{函数项级数})在$E$的某子集$D$上收敛，则称级数(\ref{函数项级数})在$D$上收敛。级数(\ref{函数项级数})在$D$上每一点$x$与其所对应的数项级数(\ref{x0处的函数项级数})的
+        和$S(x)$构成一个定义在$D$上的函数，称为级数(\ref{函数项级数})的和函数，并写作
+        \begin{equation*}
+            u_1(x)+u_2(x)+\cdots+u_n(x)+\cdots=S(x),\quad x\in D
+        \end{equation*}
+        即
+        \begin{equation*}
+            \lim_{n\to\infty}S_n(x)=S(x)
+        \end{equation*}
+        上述所描述的点收敛被称为逐点收敛，下面给出一致收敛的定义。
+        \begin{定义}
+            设函数列$\{f_n\}$与函数$f$定义在同一数集$D$上，若对任给的正数$\varepsilon$，总存在某一正整数$N$，使得当$n>N$时，对一切$x\in D$，都有
+            \begin{equation*}
+                \left|f_n(x)-f(x)\right|<\varepsilon
+            \end{equation*}
+            则称函数列$\{f_n\}$在$D$上一致收敛于$f$，记作
+            \begin{equation*}
+                f_n(x)\rightrightarrows f(x)\left(n\rightarrow \infty\right),\quad x\in D
+            \end{equation*}
+        \end{定义}
+        一致收敛的含义在于，给定一任意小的$\varepsilon$，一定存在一个同一的指标，使得$D$上所有点的收敛速度大于该指标。我们拿函数列$\{x^n\}$为例，其在$[0,1)$上并不是一致收敛的。其原因在于给定一个指标，在$1$左领域内总存在一些点，它们的收敛速度是慢于这个指标的。而如果给定一个数$0<\delta<1$，就能找到一个确定的指标使得函数列在$[0,\delta]$上一致收敛。下面我们再给出函数项级数的一致收敛的定义。
+        \begin{定义}
+            设$\{S_n(x)\}$是函数项级数$\sum u_n(x)$的部分和函数列。若$\{S_n(x)\}$在数集$D$上一致收敛于$S(x)$，则称$\sum u_n(x)$在
+            $D$上一致收敛于$S(x)$。若$\sum u_n(x)$在任意闭区间$[a,b]\subset I$上一致收敛，则称$\sum u_n(x)$在$I$上内闭一致收敛。
+        \end{定义}
+        关于一致收敛，我们有如下充要条件。
+        \begin{定理}[一致收敛的柯西准则]\label{一致收敛的柯西准则}
+            函数项级数$\sum u_n(x)$在数集$D$上一致收敛的充要条件为：对任给的正数$\varepsilon$，总存在某正整数$N$，使得当$n>N$时，对一切$x\in D$和正整数$p$，都有
+            \begin{equation*}
+                \left|S_{n+p}(x)-S_n(x)\right|<\varepsilon
+            \end{equation*}
+            或者
+            \begin{equation*}
+                \left| u_{n+1}(x)+u_{n+2}(x)+\cdots+u_{n+p}(x)\right|<\varepsilon
+            \end{equation*}
+        \end{定理}
+        按照上面的定理，我们再给出如下定义。
+        \begin{定义}
+            对任给的正数$\varepsilon$，总存在某正整数$N$，使得当$n>N$时，对一切$x\in D$和正整数$p$，都有
+            \begin{equation*}
+                | u_{n+1}(x)|+|u_{n+2}(x)|+\cdots+|u_{n+p}(x)|<\varepsilon
+            \end{equation*}
+            则称函数项级数$\sum u_n(x)$在数集$D$上绝对一致收敛。
+        \end{定义}
+        容易证明，当$\sum u_n(x)$在数集$D$上绝对一致收敛时，$\sum u_n(x)$也在数集$D$一致收敛。关于判别级数是否一致收敛，除了上述的定理\ref{一致收敛的柯西准则}，我们还有更加常用的函数项级数的一致收敛性判别法。
+        \begin{定理}[魏尔斯特拉斯判别法]\label{魏尔斯特拉斯判别法}
+            设函数项级数$\sum u_n(x)$定义在数集$D$上，$\sum M_n$为收敛的正项级数，若对任意$x\in D$，有
+            \begin{equation*}
+                |u_n(x)|\leqslant M_n,\quad n=1,2,\cdots
+            \end{equation*}
+            则函数项级数$\sum u_n(x)$在$D$上一致收敛.
+        \end{定理}
+        定理\ref{魏尔斯特拉斯判别法} 又被称为$M$判别法或优级数判别法，当函数项级数满足定理\ref{魏尔斯特拉斯判别法} 的条件时，又称$\sum M_n$为$\sum u_n(x)$的优级数。
+        下面的两个定理给出了定义在区间$I$上的形如
+        \begin{equation} \label{混合的函数项级数}
+            \sum_{n=1}^{\infty}u_n(x)v_n(x)=u_1(x)v_1(x)+u_2(x)v_2(x)+\cdots+u_n(x)v_n(x)+\cdots
+        \end{equation}
+        的函数项级数的一致收敛性判别法。
+        \begin{定理}[阿贝尔判别法]
+            设函数项级数\textnormal{(\ref{混合的函数项级数})}满足以下三个条件：\\
+            \textnormal{(i)} $\sum u_n(x)$在区间$I$上一致收敛；\\
+            \textnormal{(ii)} 对于每个$x\in I$，$\{v_n(x)\}$是单调的；\\
+            \textnormal{(iii)} $\{v_n(x)\}$在$I$上单调有界，即存在正数$M$，使得对一切$x\in I$和正整数$n$，有
+            \begin{equation*}
+                \{v_n(x)\}\leqslant M
+            \end{equation*}
+            则级数\textnormal{\ref{混合的函数项级数}} 在$I$上一致收敛。
+        \end{定理}
+        \begin{定理}[狄利克雷判别法]
+            设函数项级数\textnormal{(\ref{混合的函数项级数})}满足以下三个条件：\\
+            \textnormal{(i)} $\sum u_n(x)$的部分和函数列
+            \begin{equation*}
+                S_n(x)=\sum_{k=1}^{n}u_k(x),\quad n=1,2,\cdots
+            \end{equation*}
+            在$I$上一致有界；\\
+            \textnormal{(ii)} 对于每个$x\in I$，$\{v_n(x)\}$是单调的；\\
+            \textnormal{(iii)} 在$I$上$v_n(x)\rightrightarrows 0(n\to\infty)$；\\
+            则级数\textnormal{(\ref{混合的函数项级数})}在$I$上一致收敛。
+        \end{定理}
+
+        \subsection{傅里叶级数}
+        \begin{定义}[三角级数]
+            三角级数定义如下：
+            \begin{equation*}
+                \frac{a_0}{2}+\sum_{k=1}^{\infty}\left(a_k\cos kx+b_k\sin kx\right)
+            \end{equation*}
+            其中$a_k,b_k$都是实数或复数。
+            
+            \begin{定理}
+                假设$f$是定义在$[-\pi,\pi]$上的一个可积函数并且可以展开成三角级数，即
+                \begin{equation*}
+                    f(x)=\frac{a_0}{2}+\sum_{k=1}^{\infty}\left(a_k\cos kx+b_k\sin kx\right),\quad x\in[-\pi,\pi]
+                \end{equation*}
+                若设级数可以逐项积分，则展开是唯一的，以及任给$k\in \mathbb{N}$，其中
+                \begin{equation*}
+                    a_k=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\cos kxdx
+                \end{equation*}
+                \begin{equation*}
+                    b_k=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\sin kxdx
+                \end{equation*}
+            \end{定理}
+        \end{定义}
+
+        \begin{定义}
+            假设$f$是定义在$[-\pi,\pi]$上的一个绝对可积函数，令
+            \begin{equation*}
+                a_k=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\cos kxdx,\quad k\geqslant0
+            \end{equation*}
+            \begin{equation*}
+                b_k=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\sin kxdx,\quad k\geqslant1
+            \end{equation*}
+            称$\{a_k\}$，$\{b_k\}$为$f(x)$的傅里叶系数，而三角函数
+            \begin{equation} \label{傅里叶级数}
+                f(x)=\frac{a_0}{2}+\sum_{k=1}^{\infty}\left(a_k\cos kx+b_k\sin kx\right)
+            \end{equation}
+            称为$f(x)$的傅里叶级数。
+        \end{定义}
+
+        事实上，函数$f$的傅里叶级数的一般形式为：
+        \begin{equation}  \label{傅里叶级数的一般形式}
+            f(x)=\sum_{k=-\infty}^{+\infty}c_ke^{-\frac{2 \pi ikx}{l}}
+        \end{equation}
+        其中
+        \begin{equation}
+            c_k=\frac{1}{l} \int_0^l f(x) e^{-\frac{2 \pi ikx}{l}} dx \quad n \in \mathbb{Z}
+        \end{equation}
+        值得一提的是，尽管$\{a_k\}$，$\{b_k\}$都是有定义的，然而三角级数(\ref{傅里叶级数})却不一定是收敛的，即使收敛，三角函数(\ref{傅里叶级数})的和也不一定等于$f(x)$。
+        在第二章以及第三章，我们会对傅里叶级数的收敛性进行讨论，并给出其收敛的充分条件以及收敛值。
+
+        关于傅里叶系数，我们有如下的定理：
+        \begin{定理} \label{贝塞瓦尔等式}
+            设$f$为$2\pi-$周期的平方可积函数，则成立帕塞瓦尔等式：
+            \begin{equation}
+                \frac{1}{\pi}\int_{-\pi}^{\pi}\left[f(x)\right]^2dx=\frac{a_0^2}{2}+\sum_{k=1}^{\infty}\left(a_n^2+b_n^2\right)
+            \end{equation}
+            这里的$a_k$，$b_k$为$f$的傅里叶系数。
+        \end{定理}
+
+        \subsection{黎曼可积}
+        由于在后面的定理证明中，我们需要利用黎曼积分以及黎曼可积的定义，下面我们先说明什么是黎曼积分。
+        \begin{定义}
+            设$f$是定义在$[a,b]$上的一个函数，$J$是一个确定的实数。若对$\forall \varepsilon>0$，总存在正数$\delta$，使得对于区间$[a,b]$上的任意分割$T$，
+            以及分割上的任意点集$\{\xi_i\}$，只要$\| T\| <\delta(\|T\|=\max_{1\leqslant i\leqslant n}\Delta x_i)$，满足
+            \begin{equation*}
+                \left|\sum_{i=1}^{n}f(\xi)\Delta x_i-J\right|<\varepsilon
+            \end{equation*}
+            则称数$J$为$f$在$[a,b]$上的定积分或黎曼积分。记为
+            \begin{equation*}
+                J=\int_{a}^{b}f(x)dx
+            \end{equation*}
+        \end{定义}
+        在给出黎曼可积的定义之前，我们先承认以下的事实：
+        \begin{定理}
+            若函数$f$在$[a,b]$上可积，则$f$在$[a,b]$上必有界。
+        \end{定理}
+        有了上面的定理，则下面的定义都是建立在$f$有界的前提下的，为了更好的理解黎曼可积的定义，我们首先给出达布和的定义。
+        \begin{定义}
+            设$T=\{\Delta_i|i=1,2,\cdots,n \}$为对$[a,b]$的任一分割，由$f(x)$在$[a,b]$上有界，则它在每个$\Delta_i$上存在上、下确界：
+            \begin{equation*}
+                M_i=\sup_{x\in\Delta_i}f(x)\quad m_i=\inf_{x\in\Delta_i}f(x)\quad i=1,2,\cdots,n
+            \end{equation*}
+            作和
+            \begin{equation*}
+                S(T)=\sum_{i=1}^{n}M_i\Delta x_i\quad s(T)=\sum_{i=1}^{n}m_i\Delta x_i
+            \end{equation*}
+            分别称为$f$关于分割$T$的上和与下和（或称达布上和与达布下和，统称达布和）。
+        \end{定义}
+        \begin{定义}
+            一个实值函数在$[0,L]$上是黎曼可积的，若它有界，而且对于任意的$\varepsilon>0$，总存在一个$[0,L]$上的分割
+            $T$，使得
+            \begin{equation*}
+                S(T)-s(T)<\varepsilon
+            \end{equation*}
+        \end{定义}
+        对于复值函数来说，其可积的充要条件是其实部与虚部可积。
+
+        \subsection{卷积的定义及性质}
+        \begin{定义}
+            给定$\mathbb{R}$上的两个$2\pi-$周期可积函数$f$和$g$，则我们称
+            \begin{equation*}
+                (f*g)(x)=\int_{-\pi}^{\pi}f(y)g(x-y)dy=\int_{-\pi}^{\pi}f(x-y)g(y)dy
+            \end{equation*}
+            为$f$和$g$的卷积。
+        \end{定义}
+
+        对于函数的卷积，有如下几个基本性质：\\
+        给定在$\mathbb{R}$上的$2\pi-$周期可积函数$f,g$以及$h$，则下面的命题成立\\
+        (1)$f*(g+h)=(f*g)+(f*h)$\\
+        (2)对任意$c\in\mathbb{C}$，有$c(f*g)=(cf*g)=(f*cg)$\\
+        (3)$(f*g)=(g*f)$\\
+        (4)$(f*g)*h=f*(g*h)$\\
+        (5)假设$f,g$是$\mathbb{R}$上的连续函数，则$(f*g)$也是$\mathbb{R}$上的连续函数\\
+        (6)记$a_k,b_k$分别为$f,g$在一般形式下的傅里叶展开的傅里叶系数，则卷积$(f*g)$在一般形式下的傅里叶展开的傅里叶系数$c_k$满足如下关系：
+        \begin{equation*}
+            c_k=a_kb_k
+        \end{equation*}
+        上面的命题(1)(2)(3)(4)都可以通过定义出发来证明，我们主要证明(5)(6)
+        \begin{proof}
+            (5)要证明$(f*g)$是$\mathbb{R}$上的连续函数，即要证：
+            对$\forall \varepsilon>0,\exists \delta>0,\forall x_1,x_2$且满足$|x_1-x_2|$时，有
+            \begin{equation*}
+                \left|(f*g)(x_1)-(f*g)(x_2)\right|<\varepsilon
+            \end{equation*}
+            事实上，由于$f$在$\mathbb{R}$上连续，因此其在区间$[-\pi,\pi]$上一定有上确界$M$,又因为$g(x)$在$\mathbb{R}$上连续，对于$\forall \varepsilon>0,\exists \delta>0$，对任意
+            $x_1,x_2\in\mathbb{R},|x_1-x_2|<\delta$，满足
+            \begin{equation*}
+                \left|g(x_1)-g(x_2)\right|<\varepsilon
+            \end{equation*}
+            因此
+            \begin{align*}
+                \left|(f * g)\left(x_1\right)-(f * g)\left(x_2\right)\right| & \leqslant \frac{1}{2 \pi}\left|\int_{-\pi}^\pi f(y)\left[g\left(x_1-y\right)-g\left(x_2-y\right)\right] d y\right| \\
+                & \leqslant \frac{1}{2 \pi} \int_{-\pi}^\pi|f(y)|\left|g\left(x_1-y\right)-g\left(x_2-y\right)\right| d y \\
+                & \leqslant \frac{\varepsilon}{2 \pi} \int_{-\pi}^\pi|f(y)| d y \\
+                & \leqslant \varepsilon M 
+            \end{align*}
+            因此命题成立。
+            
+            (6)从定义出发即得
+            \begin{align*}
+                c_k & =\frac{1}{2 \pi} \int_{-\pi}^\pi(f * g)(x) e^{-i k x} d x \\
+                & =\frac{1}{2 \pi} \int_{-\pi}^\pi \frac{1}{2 \pi}\left(\int_{-\pi}^\pi f(y) g(x-y) d y\right) e^{-i k x} d x \\
+                & =\frac{1}{2 \pi} \int_{-\pi}^\pi f(y) e^{-i k y}\left(\frac{1}{2 \pi} \int_{-\pi}^\pi g(x-y) e^{-i k(x-y)} d x\right) d y \\
+            \end{align*}
+            因为函数$g(x)$以及$e^{-kx}$都是$\mathbb{R}$上的$2\pi-$周期函数，因此对于每个固定的$y\in\mathbb{R}$，满足
+            \begin{equation*}
+                \frac{1}{2 \pi} \int_{-\pi}^\pi g(x-y) e^{-i k(x-y)} d x=\frac{1}{2 \pi} \int_{-\pi}^\pi g(x) e^{-i k x} d x
+            \end{equation*}
+            于是
+            \begin{equation*}
+                c_k  =\frac{1}{2 \pi} \int_{-\pi}^\pi f(y) e^{-i k y}\left(\frac{1}{2 \pi} \int_{-\pi}^\pi g(x) e^{-i k x} d x\right) d y=a_k b_k
+            \end{equation*}
+        \end{proof}
+        后面，我们会利用卷积的性质来研究傅里叶级数的收敛性，我们会看到，卷积是研究傅里叶级数的有力工具，除此之外，卷积在研究傅里叶变换以及概率论中都有着重要的地位。
+
+        \newpage
+
+    %第二章内容
+    \section{定理推导}
+    本章将推导一些预备的定理结论，定理的结论将为下一章的重要定理做准备。同时我们还会引入傅里叶分析中一些十分重要的概念，我们会说明这些概念的用途，并且我们还会看到它们在研究傅里叶分析中起到了十分重要的作用。
+        \subsection{狄利克雷引理}
+        黎曼曾在狄利克雷指导下研究傅里叶级数。1854年他在论文《用三角级数表示函数》中证明了:如果$f(x)$在周期$[-\pi,\pi]$上有界可积,则有
+        \begin{equation*}
+            \lim_{k\rightarrow\infty}a_k=0 \qquad \lim_{k\rightarrow\infty}b_k=0
+        \end{equation*}
+        其中
+        \begin{equation*}
+            a_k=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\cos\lambda xdx \qquad k=0,1,\cdots
+        \end{equation*}
+        \begin{equation*}
+            b_k=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\sin\lambda xdx \qquad k=1,2,\cdots
+        \end{equation*}
+        这就是黎曼—勒贝格定理，进一步地，该定理还能够将有界可积条件放宽为Lebesgue绝对可积。并且，定理条件的闭区间可扩展为任意闭区间，得到狄利克雷引理。下面我们给出该定理并加以证明。
+
+        \begin{定理}[狄利克雷引理]
+            假设$f$是$[a,b]$上的一个有界可积函数，则
+            \begin{equation*}
+                \lim_{\lambda\rightarrow+\infty}\int_{a}^{b}f(x)\cos\lambda xdx=0 \qquad \lim_{\lambda\rightarrow+\infty}\int_{a}^{b}f(x)\sin\lambda xdx=0
+            \end{equation*}
+        \end{定理}
+        
+        \begin{proof}
+            要证明上面的极限式，等价于证明：对$\forall \varepsilon >0$，$\exists N>0$使得对$\forall\lambda>N$，有
+            \begin{equation*}
+                \left|\int_{a}^{b}f(x)\cos\lambda xdx\right|<\varepsilon  \qquad \left|\int_{a}^{b}f(x)\sin\lambda xdx\right|<\varepsilon 
+            \end{equation*}
+            我们只证明第一个式子，第二个式子的证明是类似的。
+
+            因为$f$是$[a,b]$上的一个有界函数，所以存在$M>0$，使得
+            \begin{equation*}
+                M=\sup_{x\in[a,b]}|f(x)|
+            \end{equation*}
+            又因为$f(x)$是$[a,b]$上的可积函数，则
+            \begin{equation*}
+                \left|\int_{a}^{b}f(x)dx\right|<+\infty
+            \end{equation*}
+            根据黎曼积分的定义，对$\forall \varepsilon >0$，存在$[a,b]$上的有限划分
+            \begin{equation*}
+                a=a_0<a_1<\cdots<a_n=b
+            \end{equation*}
+            使得
+            \begin{equation*}
+                \sum_{i=1}^{n}\left(\sup_{[a_{i-1},a_i]}f-\inf_{a_{i-1},a_i}f\right)\left(a_i-a_{i-1}\right)<\frac{\varepsilon }{2}
+            \end{equation*}
+            所以
+            \begin{align*}
+                \int_{a}^{b}f(x)\cos\lambda xdx&=\sum_{i=1}^{n}\int_{a_{i-1}}^{a_i}f(x)\cos\lambda xdx\\
+                &=\underbrace{\sum_{i=1}^{n}f(a_{j-1})\int_{a_{i-1}}^{a_i}\cos\lambda xdx}_{\text{(I)}}+\underbrace{\sum_{i=1}^{n}\int_{a_{i-1}}^{a_i}(f(x)-f(a_{j-1}))\cos\lambda xdx}_{\text{(II)}}
+            \end{align*}
+            对于(I)，由于
+            \begin{equation*}
+                \left|\int_{a_{i-1}}^{a_i}\cos\lambda xdx\right|=\left|\frac{\sin\lambda a_j-\sin\lambda a_{j-1}}{\lambda}\right|\leqslant\frac{2}{\lambda}
+            \end{equation*}
+            因此
+            \begin{equation*}
+                \left|\sum_{i=1}^{n}f(a_{j-1})\int_{a_{i-1}}^{a_i}\cos\lambda xdx\right|\leqslant\frac{2nM}{\lambda}
+            \end{equation*}
+            对于(II)
+            \begin{align*}
+                &\left|\sum_{i=1}^{n}\int_{a_{i-1}}^{a_i}(f(x)-f(a_{j-1}))\cos\lambda xdx\right|\\
+                &\leqslant\sum_{i=1}^{n}\int_{a_{i-1}}^{a_i}\left(\sup_{[a_{i-1},a_i]}f-\inf_{a_{i-1},a_i}f\right)\left|\cos\lambda x\right|dx\\
+                &\leqslant\sum_{i=1}^{n}\left(\sup_{[a_{i-1},a_i]}f-\inf_{a_{i-1},a_i}f\right)\left(a_i-a_{i-1}\right)\leqslant\frac{\varepsilon }{2}
+            \end{align*}
+            最后，我们得到
+            \begin{align*}
+                \left|\int_{a}^{b}f(x)\cos\lambda xdx\right|&\leqslant\left|\sum_{i=1}^{n}f(a_{j-1})\int_{a_{i-1}}^{a_i}\cos\lambda xdx\right|+\left|\sum_{i=1}^{n}\int_{a_{i-1}}^{a_i}(f(x)-f(a_{j-1}))\cos\lambda xdx\right|\\
+                &\leqslant\frac{2nM}{\lambda}+\frac{\varepsilon }{2}
+            \end{align*}
+            因此，只要取$\lambda=\lfloor\frac{4nM}{\varepsilon }\rfloor+1$即可证得第一个式子。\\
+        \end{proof}
+        这一定理中有界可积的条件可以放宽为在区间$(\alpha,\beta)$上绝对可积，这里不要求$f(x)$在区间上有界，区间$(\alpha,\beta)$也不必为有界区间。狄利克雷引理是证明傅里叶级数收敛性的重要工具，1880年U.Dini 给出了另一个傅里叶级数收敛的充分条件:满足利普希兹条件的函数$f(x)$其傅里叶级数收敛，对该定理的证明就采用了狄利克雷引理。
+
+        \subsection{核}
+        下面我们介绍核的概念。
+        \begin{定义}
+            定义在$[-\pi,\pi]$上的三角多项式
+            \begin{equation*}
+                D_N(x)=\sum_{k=-N}^{N}e^{ikx}
+            \end{equation*}
+            被称为$N$次狄利克雷核。
+        \end{定义}
+        狄利克雷核具有良好的性质：当$x\neq0$时，其表示为
+        \begin{equation*}
+            D_N(x)=\frac{\sin(N+\frac{1}{2})x}{\sin\frac{x}{2}}
+        \end{equation*}
+        当$x=0$时，$D_N(x)=2N+1$，从定义上看，狄利克雷核的傅里叶系数还满足
+        \begin{equation*}
+            c_k=
+            \begin{cases}
+                1 & |k|\leqslant N\\
+                0 & |k|>N 
+            \end{cases}
+        \end{equation*}
+        除此之外，我们还能利用卷积以及狄利克雷核来表示傅里叶级数，对此，我们有下面的定理。
+        \begin{定理}
+            定义在$[-\pi,\pi]$上的函数$f$的傅里叶级数的部分和可以表示为
+            \begin{equation*}  \label{卷积表示部分和}
+                S_N(f)(x)=(f*D_N)(x)
+            \end{equation*}
+            其中$D_N$为$N$次狄利克雷核。
+        \end{定理}
+
+        \begin{proof}
+            \begin{align*}
+                S_N(f)(x) & =\sum_{k=-N}^N c_k e^{i k x} \\
+                & =\sum_{k=-N}^N\left(\frac{1}{2 \pi} \int_{-\pi}^\pi f(y) e^{-i k y} \mathrm{~d} y\right) e^{i k x} \\
+                & =\frac{1}{2 \pi} \int_{-\pi}^\pi f(y)\left(\sum_{k=-N}^N\left(e^{-i k(x-y)}\right)\right) \mathrm{d} y \\
+                & =\left(f * D_N\right)(x)
+                \end{align*}
+        \end{proof}
+        利用卷积来表示傅里叶级数的部分和十分方便，上面对狄利克雷定理的证明就运用到了这种表达。可以看到，上面的卷积表达在$N\to\infty$时即为傅里叶级数，此外，我们还能对这种表达进行拓展，以便我们研究傅里叶级数的收敛性质。
+        也就是说，给定一族定义在$[-\pi,\pi]$上的函数$\{K_n(x)\}_{n=1}^\infty$，我们研究$n\to\infty$时卷积$(f*K_n)$的性质。这族函数我们称之为“核”。然而，绝大部分的核对我们的研究没有什么用处，我们更加关注具有良好性质的“好核(good kernels)”。一般来说，好核
+        需要满足下面的三种性质：\\
+        (1)对$\forall n>0$
+        \begin{equation*}
+            \frac{1}{2\pi}\int_{-\pi}^\pi K_n(x)dx=1
+        \end{equation*}
+        (2)存在$M>0$，对于一切$n>0$，满足
+        \begin{equation*}
+            \int_{-\pi}^\pi \left|K_n(x)\right|dx\leqslant M
+        \end{equation*}
+        (3)对任意$0<\delta<\pi$，有
+        \begin{equation*}
+            \lim_{n\to\infty}\int_{\delta\leqslant|x|\leqslant\pi}\left|K_n(x)\right|dx=0
+        \end{equation*}
+
+        之所以称满足上面三个条件的函数族为好核，实际是因为这样的核在$n\to\infty$时与函数$f$的卷积能够很好的收敛至$f(x)$，下面的定理即阐释了这个事实。
+        \begin{定理}  \label{好核的卷积逼近}
+            若函数族$\{K_n(x)\}_{n=1}^\infty$定义在$[-\pi,\pi]$上且其为好核，$f$为定义在$[-\pi,\pi]$上的可积函数，且在$x_0\in[-\pi,\pi]$处连续，则
+            \begin{equation*}
+                \lim_{n\to \infty}(f*K_n)(x_0)=f(x_0)
+            \end{equation*}
+            
+        \end{定理}
+        \begin{proof}
+            证明上面的极限即为证明，对$\forall \varepsilon>0,\exists N>0,\forall n>N$，有
+            \begin{equation*}
+                \left|(f*K_n)(x_0)-f(x_0)\right|<\varepsilon
+            \end{equation*}
+            由好核的性质(1)，因此
+            \begin{equation*}
+                f(x_0)=\frac{1}{2\pi}\int_{-\pi}^\pi K_n(x)f(x_0)dx
+            \end{equation*}
+            由此
+            \begin{align*}
+                &\left|\left(f * K_n\right)(x)-f(x)\right|=  \left|\frac{1}{2 \pi} \int_{-\pi}^\pi K_n(y)[f(x_0-y)-f(x_0)] d y\right| \\
+                \leqslant & \frac{1}{2 \pi} \int_{|y|<\delta}\left|K_n(y)\right||f(x_0-y)-f(x_0)| d y +\frac{1}{2 \pi} \int_{\delta \leqslant|y| \leqslant \pi}\left|K_n(y)\right||f(x_0-y)-f(x_0)| d y
+            \end{align*}
+            因为$f$在$[-\pi,\pi]$上可积，因此$f$在$[-\pi,\pi]$上有界，即$\exists M>0, |f(x)|<M,\forall x\in[-\pi,\pi]$，则
+            \begin{equation*}
+                |f(x_0-y)-f(x_0)|<2M
+            \end{equation*}
+            又因为$f$在$x_0$处连续，则$\forall \varepsilon>0,\exists \delta>0,\forall |y|<\delta$，满足
+            \begin{equation*}
+                |f(x_0-y)-f(x_0)|<\varepsilon/2
+            \end{equation*}
+            因此
+            \begin{equation*}
+                \left|\left(f * K_n\right)(x)-f(x)\right|\leqslant\frac{\varepsilon}{4 \pi} \int_{|y|<\delta}\left|K_n(y)\right| d y+\frac{2 M}{2 \pi} \int_{\delta \leqslant|y| \leqslant \pi}\left|K_n(y)\right| d y
+            \end{equation*}
+            由性质(3)可知，当$n$充分大时
+            \begin{equation*}
+                \int_{\delta \leqslant|y| \leqslant \pi}\left|K_n(y)\right| d y<\frac{\varepsilon\pi}{2M}
+            \end{equation*}
+            由此得到
+            \begin{equation*}
+                \left|\left(f * K_n\right)(x)-f(x)\right|\leqslant\frac{\varepsilon}{4 \pi}\int_{-\pi}^{\pi}\left|K_n(y)\right| d y+\frac{\varepsilon}{2}=\varepsilon
+            \end{equation*}
+        \end{proof}
+        若函数$f$在区间$I\subset [-\pi,\pi]$上连续，则结论在$I$上均成立。
+
+    \newpage
+
+    %第三章内容
+    \section{傅里叶级数的连续性讨论}
+    上一章我们证明了狄利克雷引理，并且给出了狄利克雷核的概念，狄利克雷核使得傅里叶级数的研究变得更加简单。在本章中，我们将会看到狄利克雷核能够处理一些分段连续函数，并给出其傅里叶级数的收敛情况。我们会发现狄利克雷核对于连续函数的处理存在一定的缺陷，于是我们会引入费耶尔核的概念。最后，对于分段连续函数来说，我们将讨论其分段点附近的点的傅里叶级数收敛的情况。
+        \subsection{狄利克雷定理}
+        狄利克雷定理的是第一个傅里叶级数收敛的充分条件，其在傅里叶分析的发展中有着重要的意义。它首先由狄利克雷于1829年提出，因此被称为狄利克雷定理。下面我们将介绍这一定理并给出其严格的证明。
+        \begin{定理}[狄利克雷定理]
+            假设$f$是定义在$\mathbb{R}$上的一个$2\pi-$周期函数，而且是规则函数以及在$\mathbb{R}$的每一点的左右微分都存在，则$f$的傅里叶级数在每一点$x\in\mathbb{R}$都收敛于
+            \begin{equation*}
+               \frac{f(x+0)+f(x-0)}{2}
+            \end{equation*}
+        \end{定理}
+
+        \begin{proof}
+            记$f$的傅里叶级数的部分和为$S_n(f)(x)$，由定理\ref{卷积表示部分和} 可得
+            \begin{equation*}
+                S_n(f)(x)=(f*D_n)(x)
+            \end{equation*}
+            上式中
+            \begin{equation*}
+                D_n(x)=\sum_{k=-n}^{n}e^{ikx}=1+2\sum_{k=1}^{n}\cos kx=
+                \begin{cases}
+                    \frac{\sin(n+\frac{1}{2})x}{\sin\frac{x}{2}}& x\neq2l\pi,l\in\mathbb{Z}\\
+                    2n+1& \text{else}
+                \end{cases}
+            \end{equation*}
+            为狄利克雷核。则得到狄利克雷积分
+            \begin{equation*}
+                S_n(f)(x)=\frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)\frac{\sin(n+\frac{1}{2})(t-x)}{\sin\frac{(t-x)}{2}}dt
+            \end{equation*}
+            由于被积函数是$2\pi-$周期的，因此
+            \begin{equation} \label{狄利克雷积分}
+                S_n(f)(x)=\frac{1}{\pi}\int_{\alpha}^{\alpha +2\pi }\varphi(t)\frac{\sin(n+\frac{1}{2})(t-x)}{t-x}dt
+            \end{equation}
+            上式对任给$\alpha\in\mathbb{R}$，$x\in(\alpha,\alpha+2\pi)$成立，其中$\displaystyle\varphi(t)=f(t)\frac{t-x}{2\sin\frac{(t-x)}{2}}$
+            下面证明$\varphi$再$\mathbb{R}$的每一点的左右微分都存在，只考虑右微分的情况，左微分的情况是类似的。
+
+            当$t\neq x$时，由于$\displaystyle\frac{t-x}{2\sin\frac{(t-x)}{2}}$关于$t$是无穷可微的，因此由$f(t)$右可微就可推出$\varphi(t)$右可微，于是，我们只需研究$\varphi(t)$在$x$点的右微分。由定义
+            \begin{align*}
+                \varphi'(x+0)&=\lim_{h\to 0^+}\frac{\varphi(x+h)-\varphi(x+0)}{h}\\
+                &=\lim_{h\to 0^+}\frac{f(t)\frac{h}{2\sin\frac{h}{2}}-\varphi(x+0)}{h}
+            \end{align*}
+            由因为
+            \begin{equation*}
+                \varphi(x+0)=\lim_{t\to x^+}\varphi(t)=\lim_{t\to x^+}f(t)\frac{t-x}{2\sin\frac{(t-x)}{2}}=f(x+0)
+            \end{equation*}
+            因此
+            \begin{align*}
+                \varphi'(x+0)&=\lim_{h\to 0^+}\frac{f(t)\frac{h}{2\sin\frac{h}{2}}-f(x+0)}{h}\\
+                &=\lim_{h\to 0^+}\frac{f(x+h)-f(x+0)}{h}+\lim_{h\to 0}\frac{f(x+h)\left(\frac{h}{2\sin\frac{h}{2}}-1\right)}{h}
+            \end{align*}
+            由于
+            \begin{align*}
+                \lim_{h}\frac{\frac{h}{2\sin\frac{h}{2}}-1}{h}&=\lim_{h\to 0}\frac{h-2\sin\frac{h}{2}}{2h\sin \frac{h}{2}}
+                =\lim_{h\to 0}\frac{h-2\left[\frac{h}{2}+o(h^2)\right]}{2h\frac{h}{2}}\\
+                &=\lim_{h\to 0}\frac{o(h^2)}{h^2}=0
+            \end{align*}
+            故而$\varphi'(x+0)=f'(x+0)$，因此$\varphi$在每一点都左右可微。
+
+            再考虑极限$\displaystyle \lim_{n\to \infty}S_n(f)(x)$，首先考虑
+            \begin{equation*}
+                \lim_{n\to\infty}\frac{1}{\pi}\int_{\alpha}^{\alpha +2\pi }\varphi(t)\frac{\sin(n+\frac{1}{2})(t-x)}{t-x}dt
+            \end{equation*}
+            对于$x\in(\alpha,\alpha+2\pi)$，记
+            \begin{align*}
+                &\quad\,\int_{\alpha}^{\alpha +2\pi }\varphi(t)\frac{\sin(n+\frac{1}{2})(t-x)}{t-x}dt\\
+                &=\underbrace{\int_{\alpha}^{x}\varphi(t)\frac{\sin(n+\frac{1}{2})(t-x)}{t-x}dt}_{\text{I}}+\underbrace{\int_{x}^{\alpha +2\pi }\varphi(t)\frac{\sin(n+\frac{1}{2})(t-x)}{t-x}dt}_{\text{II}}
+            \end{align*}
+            对于I，令$u=x-t$，则
+            \begin{align*}
+                &\quad\,\int_{\alpha}^{x}\varphi(t)\frac{\sin(n+\frac{1}{2})(t-x)}{t-x}dt\\
+                &=\int_{0}^{x-\alpha}\varphi(x-u)\frac{\sin(n+\frac{1}{2})u}{u}du\\
+                &=\int_{0}^{x-\alpha}\varphi(x+0)\frac{\sin(n+\frac{1}{2})u}{u}du+\int_{0}^{x-\alpha}\frac{\varphi(x-u)-\varphi(x+0)}{u}\sin(n+\frac{1}{2})udu
+            \end{align*}
+            同样地，令$u=t-x$，对于II也有
+            \begin{align*}
+                &\quad\,\int_{x}^{\alpha+x}\varphi(t)\frac{\sin(n+\frac{1}{2})(t-x)}{t-x}dt\\
+                &=-\int_{0}^{\alpha+2\pi-x}\varphi(x+u)\frac{\sin(n+\frac{1}{2})u}{u}du\\
+                &=\int_{0}^{\alpha+2\pi-x}\varphi(x-0)\frac{\sin(n+\frac{1}{2})u}{u}du+\int_{0}^{\alpha+2\pi-x}\frac{\varphi(x-0)-\varphi(x+u)}{u}\sin(n+\frac{1}{2})udu
+            \end{align*}
+            又由于
+            \begin{equation*}
+                \int_{0}^{+\infty}\frac{\sin x}{x}dx=\frac{\pi}{2}
+            \end{equation*}
+            可以得到
+            \begin{equation*}
+                \lim_{n\to\infty}\int_{0}^{x-\alpha}\varphi(x+0)\frac{\sin(n+\frac{1}{2})u}{u}du=\varphi(x+0)\lim_{n\to\infty}\int_{0}^{(n+\frac{1}{2})(x-\alpha)}\frac{\sin r}{r}dr=\frac{\pi}{2}\varphi(x+0)
+            \end{equation*}
+            同理有
+            \begin{equation*}
+                \lim_{n\to\infty}\int_{0}^{\alpha+2\pi-x}\varphi(x-0)\frac{\sin(n+\frac{1}{2})u}{u}du=\frac{\pi}{2}\varphi(x-0)
+            \end{equation*}
+            由于前面已经证明了$\varphi$在每一点都左右可微以及$\varphi$是规则函数，因此
+            \begin{equation*}
+                \frac{\varphi(x-u)-\varphi(x+0)}{u},\qquad\frac{\varphi(x-0)-\varphi(x+u)}{u}
+            \end{equation*}
+            是在区间$[0,x-\alpha]$，$[0,\alpha+2\pi-x]$上的有界可积函数，根据狄利克雷引理可知
+            \begin{equation*}
+                \lim_{n\to\infty}\int_{0}^{x-\alpha}\frac{\varphi(x-u)-\varphi(x+0)}{u}\sin(n+\frac{1}{2})udu=0
+            \end{equation*}
+            \begin{equation*}
+                \lim_{n\to\infty}\int_{0}^{\alpha+2\pi-x}\frac{\varphi(x-0)-\varphi(x+u)}{u}\sin(n+\frac{1}{2})udu=0
+            \end{equation*}
+            因此
+            \begin{align*}
+                \lim_{n\to\infty}S_n(f)(x)&=\frac{1}{\pi}\left(\frac{\pi}{2}\varphi(x+0)+\frac{\pi}{2}\varphi(x-0)\right)\\
+                &=\frac{\varphi(x+0)+\varphi(x-0)}{2}\\
+                &=\frac{f(x+0)+f(x-0)}{2}
+            \end{align*}
+            即为定理结论。\\
+        \end{proof}
+
+        通过狄利克雷定理，我们可以看到，傅里叶级数的收敛条件除了要求函数在每一点处左右连续外，还要求函数每一点都存在左右微分。这里的傅里叶级数部分和是利用狄利克雷核来表示的，而
+        定理\ref{好核的卷积逼近} 告诉我们，只要函数连续，好核的卷积在连续点处必然等于$f(x)$在该点处的值，那么这就说明狄利克雷核或许并不是一个好核。事实上，狄利克雷核并不完全满足好核的三条性质。
+        对于这一情况，我们有下面的定理。
+        \begin{定理}
+            设$\{D_n(x)\}_{n=1}^\infty$是狄利克雷核，则下面的估计成立
+            \begin{equation*}
+                \int_{-\pi}^\pi \left|D_n(x)\right|dx\geqslant c\ln n
+            \end{equation*}
+            其中$c$是大于零的常数。
+        \end{定理}
+        
+        \begin{proof}
+            由于在$\mathbb{R}$上$|x|\geqslant|\sin x|$，因此
+            \begin{equation*}
+                \left|D_n(x)\right|=\left| \frac{\sin(n+\frac{1}{2})x}{\sin\frac{x}{2}}\right|\geqslant c\left|\frac{\sin(n+\frac{1}{2})x}{x}\right|
+            \end{equation*}
+            其中$c$是大于零的常数，上式中$x\neq 0$，所以
+            \begin{align*}
+                \int_{-\pi}^{\pi}\left|D_n(x)\right|dx&=\int_{-\pi}^{\pi}\left| \frac{\sin(n+\frac{1}{2})x}{\sin\frac{x}{2}}\right|dx\geqslant c\int_{-\pi}^{\pi}\left|\frac{\sin(n+\frac{1}{2})x}{x}\right|dx\\
+                &=c\int_{-\pi}^{\pi}\left|\frac{\sin(n+\frac{1}{2})x}{\left(n+\frac{1}{2}\right)x}\right|d\left[\left(n+\frac{1}{2}\right)x\right]\\
+                &=c\int_{-\left(n+\frac{1}{2}\right)\pi}^{\left(n+\frac{1}{2}\right)\pi}\left|\frac{\sin t}{t}\right|dt\geqslant c\int_{0}^{(n-1)\pi}\left|\frac{\sin t}{t}\right|dt\\
+                &=c\sum_{k=0}^{n-2}\int_{k\pi}^{(k+1)\pi}\left|\frac{\sin t}{t}\right|dt\geqslant c\sum_{k=0}^{n-2}\frac{1}{(k+1)\pi}\int_{k\pi}^{(k+1)\pi}\left|\sin t\right|dt\\
+                &=\frac{2c}{\pi}\sum_{k=1}^{n-1}\frac{1}{k}
+            \end{align*}
+            根据$\ln \left(1+\frac{1}{k}\right)\leqslant\frac{1}{k}$，因此可以得到
+            \begin{equation*}
+                \sum_{k=1}^{n-1}\frac{1}{k}\geqslant\sum_{k=1}^{n-1}\ln\left(1+\frac{1}{k}\right)=\sum_{k=1}^{n-1}\ln\frac{k+1}{k}=\ln{\prod_{k=1}^{n-1}}\frac{k+1}{k}=\ln n 
+            \end{equation*}
+            这样就得到估计式
+                \begin{equation*}
+                    \int_{-\pi}^\pi \left|D_n(x)\right|dx\geqslant c\ln n
+                \end{equation*}
+
+        \end{proof}
+        因此，狄利克雷核并不满足好核的第二个性质，这就表明它与连续函数的卷积并不一定收敛至原函数。所以我们需要一个好核在更普遍的条件下逼近$f$，同时我们不能离开对傅里叶级数的研究，因此我们需要对狄利克雷核进行改进。下面我们会看到，狄利克雷核的求和平均很好地解决了这一问题。
+
+        \subsection{切萨罗求和}
+
+        \begin{定义}
+            设$\sum_{k=0}^{\infty}a_k$为一个级数，$\{S_n\}$为它的部分和级数，即
+            \begin{equation*}
+                S_n=\sum_{k=0}^{n-1}a_k \quad n\in\mathbb{N}
+            \end{equation*}
+            令
+            \begin{equation*}
+                \sigma_1=S_1,\,\sigma_2=\frac{S_1+S_2}{2},\,\cdots,\,\sigma_n=\frac{S_1+\cdots+S_n}{n}\quad n\in\mathbb{N}
+            \end{equation*}
+            称级数$\sum_{k=1}^{\infty}a_k$在切萨罗$(Ces\grave{a} ro)$意义$(\text{算数平均和})$下收敛于$\sigma$当且仅当$\{\sigma_n\}$收敛于$\sigma$。
+        \end{定义}
+        切萨罗求和有一个重要的性质，即若级数$\sum_{k=1}^{\infty}a_k$在通常意义下收敛于$S$，那么该级数在切萨罗意义下也收敛于$S$，对此，我们有下面的定理。
+        \begin{定理} \label{切萨罗求和定理}
+            若$\displaystyle S_n=\sum_{k=1}^{n-1}a_k\longrightarrow \sigma \quad(n\longrightarrow \infty)$，则$\displaystyle\sigma_n=\frac{S_1+\cdots+S_n}{n}\longrightarrow\sigma\quad (n\longrightarrow \infty)$
+        \end{定理}
+        \begin{proof}
+            由于$\displaystyle\lim_{n\to n}S_n=\sigma$，则对$\forall \varepsilon>0,\exists N >0$，对$\forall n>N$，有
+            \begin{equation*}
+                \left|S_n-\sigma\right|<\frac{\varepsilon}{2}
+            \end{equation*}
+            因此在此条件下
+            \begin{align*}
+                |\sigma_n-\sigma|&=\left|\frac{S_1+\cdots+S_n}{n}-\sigma\right|\\
+                &\leqslant\underbrace{\frac{\left|S_1-\sigma\right|+\cdots+\left|S_{N}-\sigma\right|}{n}}_{\text{I}}+\underbrace{\frac{\left|S_{N+1}-\sigma\right|+\cdots+\left|S_n-\sigma\right|}{n}}_{\text{II}}
+            \end{align*}
+            对于I，我们取$\displaystyle M=\max_{1\leqslant k\leqslant N-1}|S_k-\sigma|$，因此I$\leqslant\frac{MN}{n}$。
+            对于II，绝对值中的每一项都小于$\varepsilon/2$，因此II$\leqslant\frac{(n-N)\varepsilon}{2n}$。
+            因此对$\forall \varepsilon>0,\exists N_0 =\lfloor\frac{2NM}{\varepsilon}\rfloor+1$，对$\forall n>N_0$，有
+            \begin{equation*}
+                |\sigma_n-\sigma|\leqslant\text{I}+\text{II}\leqslant\varepsilon
+            \end{equation*}
+        \end{proof}
+        上面命题的逆命题并不成立，例如级数$\sum_{k=0}^{\infty}\left(-1\right)^k$在一般意义下是发散的，但其在切萨罗意义下收敛至$1/2$。同样地，若函数的傅里叶级数收敛，则其傅里叶级数在
+        切萨罗意义下也收敛，然而，若该函数的傅里叶级数在切萨罗意义下收敛，其傅里叶级数并不一定收敛。
+
+        \subsection{费耶尔核}
+        在引入了切萨罗和的概念后，我们开始研究狄利克雷核的算数平均和，这样做的意义是，当狄利克雷核的卷积能够逼近函数$f$时，其切萨罗和的卷积也同样能够逼近函数$f$，反之，若狄利克雷核的卷积不能收敛到
+        函数$f$时，其切萨罗和的卷积也有可能逼近$f$，因此我们考虑下面的函数族：
+        \begin{equation} \label{费耶尔核}
+            F_N(x)=\frac{D_0(x)+\cdots+D_{N-1}(x)}{N}
+        \end{equation}
+        其中，$D_0(x)=1$，$D_k(x)(k\geqslant1)$为$k$次狄利克雷核，根据卷积的性质(1)(2)可以得到
+        \begin{equation*}
+            (f*F_N)(x)=\frac{S_0(f)(x)+\cdots+S_{N-1}(f)(x)}{N}
+        \end{equation*}
+        其中$S_k(f)(x)$是函数$f$的前$k$项傅里叶级数和。根据定理\ref{切萨罗求和定理} ，当
+        \begin{equation*}
+            \lim_{n\to\infty}(f*D_n)(x)=f(x)
+        \end{equation*}
+        则必有
+        \begin{equation*}
+            \lim_{n\to\infty}(f*F_n)(x)=f(x)
+        \end{equation*}
+        因此函数族$\{F_n(x)\}_{0}^{\infty}$可以作为研究傅里叶级数的核。
+        \begin{定义}
+            函数族$\{F_n(x)\}_{1}^{\infty}$定义在$[-\pi,\pi]$上，且
+            \begin{equation*}
+                F_N(x)=\frac{D_0(x)+\cdots+D_{N-1}(x)}{N}
+            \end{equation*}
+            其中，$D_0(x)=1$，$D_k(x)(k\geqslant1)$为$k$次狄利克雷核，$F_N(x)$被称为$N$次费耶尔核$(Fej\acute{e} r)$。
+        \end{定义}
+        由于狄利克雷核满足
+        \begin{equation*}
+            D_n(x)=
+            \begin{cases}
+                \frac{\sin \left(n+\frac{1}{2}\right)x}{\sin\frac{x}{2}} & x\in[-\pi,0),(0,\pi]\\
+                2n+1 & x=0
+            \end{cases}
+        \end{equation*}
+        因此，当$x\neq 0$时
+        \begin{equation*}
+            F_n(x)=\frac{1}{n}\left[1+\sum_{k=1}^{n-1}\frac{\sin\left(k+\frac{1}{2}\right)x}{\sin \frac{x}{2}}\right]=\frac{1}{n}\left[1+\sum_{k=1}^{n-1}\frac{\sin\left(k+\frac{1}{2}\right)x\sin\frac{x}{2}}{\sin^2\frac{x}{2}}\right]
+        \end{equation*}
+        因为
+        \begin{align*}
+            \sum_{k=1}^{n-1}\sin\left(k+\frac{1}{2}\right)x\sin\frac{x}{2}=\frac{1}{2}\sum_{k=1}^{n-1}\cos kx-\cos(k+1)x=\frac{1}{2}\left(\cos x-\cos nx\right)
+        \end{align*}
+        且$2\sin^2\frac{1}{2}=1-\cos x$，得到
+        \begin{equation*}
+            F_n(x)=\frac{1}{n}\left[1+\sum_{k=1}^{n-1}\frac{\sin\left(k+\frac{1}{2}\right)x\sin\frac{x}{2}}{\sin^2\frac{x}{2}}\right]=\frac{1}{n}\frac{\sin^2\frac{nx}{2}}{\sin^2\frac{x}{2}}
+        \end{equation*}
+        当$x=0$时，$F_n(0)=n$，综上，费耶尔核还能写成
+        \begin{equation*}
+            F_n(x)=
+            \begin{cases}
+                \frac{1}{n}\frac{\sin^2\frac{nx}{2}}{\sin^2\frac{x}{2}}\quad&x\in[-\pi,0),(0,\pi]\\
+                n\quad&x=0
+            \end{cases}
+        \end{equation*}
+        下面我们将证明费耶尔核是一个好核，它满足好核的三个性质：\\
+        (1)对$\forall n>0$
+        \begin{equation*}
+            \frac{1}{2\pi}\int_{-\pi}^\pi F_n(x)dx=1
+        \end{equation*}
+        (2)存在$M>0$，对于一切$n>0$，满足
+        \begin{equation*}
+            \int_{-\pi}^\pi \left|F_n(x)\right|dx\leqslant M
+        \end{equation*}
+        (3)对任意$0<\delta<\pi$，有
+        \begin{equation*}
+            \lim_{n\to\infty}\int_{\delta\leqslant|x|\leqslant\pi}\left|F_n(x)\right|dx=0
+        \end{equation*}
+        \begin{proof}
+            (1)
+            由于
+            \begin{equation*}
+                F_n(x)=\frac{D_0(x)+\cdots+D_{n-1}(x)}{n}
+            \end{equation*}
+            因此只需要证明对任意的$n\geqslant 0$，狄利克雷核满足好核的性质(1)，即
+            \begin{equation*}
+                \frac{1}{2\pi}\int_{-\pi}^\pi D_n(x)dx=1\quad \forall n\geqslant 0
+            \end{equation*}
+            显然$n=0$时结论成立，对于$n>0$的情况，根据狄利克雷核的定义
+            \begin{equation*}
+                D_n(x)=\sum_{k=-N}^{n}e^{ikx}=1+2\sum_{k=1}^{n}\cos kx
+            \end{equation*}
+            因此
+            \begin{equation*}
+                \frac{1}{2\pi}\int_{-\pi}^{\pi}D_n(x)dx=\frac{1}{2\pi}\int_{-\pi}^{\pi}\left(1+2\sum_{k=1}^{n}\cos kx \right)dx=1+\frac{1}{2\pi}\sum_{k=1}^{n}\int_{-\pi}^{\pi}2\cos kx dx=1
+            \end{equation*}
+            所以
+            \begin{equation*}
+                \frac{1}{2\pi}\int_{-\pi}^{\pi}F_n(x)dx=\frac{1}{n}\sum_{k=0}^{n-1}\frac{1}{2\pi}\int_{-\pi}^{\pi}D_k(x)dx=1
+            \end{equation*}
+            因此费耶尔核满足好核的性质(1)。
+
+            (2)注意到费耶尔核在$[-\pi,\pi]$上是非负的，因此由(1)的结论，(2)也同样成立。
+
+            (3)由于$0<\delta<\pi$，因此在区间$[\delta,\pi]$上
+            \begin{equation*}
+                F_n(x)=\frac{1}{n}\frac{\sin^2\frac{nx}{2}}{\sin^2\frac{x}{2}}
+            \end{equation*}
+            由于在区间$[\delta,\pi]$上
+            \begin{equation*}
+                \sin^2\frac{x}{2}\geqslant\sin^2\frac{\delta}{2}>0
+            \end{equation*}
+            因此
+            \begin{equation*}
+                0\leqslant F_n(x)<\frac{1}{n}\frac{1}{\sin^2\frac{\delta}{2}}\quad  \left(x\in[\delta,\pi]\right)
+            \end{equation*}
+            所以积分
+            \begin{equation*}
+                0<\int_{\delta\leqslant|x|\leqslant\pi}\left|F_n(x)\right|dx<\frac{1}{n}\int_{\delta\leqslant|x|\leqslant\pi}\frac{1}{\sin^2\frac{\delta}{2}}dx=\frac{1}{n}\frac{\pi-\delta}{\sin^2\frac{\delta}{2}}
+            \end{equation*}
+            上式左右两边对$n$取极限即可得到
+            \begin{equation*}
+                \lim_{n\to\infty}\int_{\delta\leqslant|x|\leqslant\pi}\left|F_n(x)\right|dx=0
+            \end{equation*}
+            这样就证明了费耶尔核是一个好核。\\
+        \end{proof}
+        由于费耶尔核是一个好核，根据定理\ref{好核的卷积逼近} 我们可以得出结论，连续函数的傅里叶级数在切萨罗意义下收敛，费耶尔于1910年首次给出并证明了这一结论。
+        尽管并不是每一个连续函数的傅里叶级数都收敛，然而这一结论却表明，当我们想用某个连续函数的傅里叶级数去逼近原函数时，若是连续函数不满足狄利克雷条件，那么我们可以使用其傅里叶级数的切萨罗和来进行逼近，这在傅里叶级数的实际用途中有着重要的意义。
+
+        \subsection{吉布斯现象}
+        由上述的讨论可以知道，若傅里叶级数的和函数在某点上不连续，则其傅里叶级数在该点的领域内不可能一致收敛。
+        下面我们讨论分段连续可微函数的傅里叶级数，若$x_0$为和函数$f$的第一类间断点的时，
+        $f$的$n$阶傅里叶级数部分和在$x_0$附近产生震荡，而且振幅不会随着$n$的增加而减少，这就是所谓的吉布斯现象。为了直观地解释，这里我们讨论一个工程学上的经典波形——方波。
+
+        一个简单的$[-\pi,\pi]$上的方波$f(x)$可以被表示为正弦函数的符号函数
+        \begin{equation*}
+            f(x)=sgn(\sin x)=
+            \begin{cases}
+                1 &x\in (0,\pi]\\
+                0 &x=0\\
+                -1 &x\in[-\pi,0)
+            \end{cases}
+        \end{equation*}
+        我们可以写出其傅里叶级数的$n$阶部分和
+        \begin{equation*}
+            S_n(x)=\frac{4}{\pi}\sum_{k=1}^{n}\frac{\sin (2k-1)x}{2k-1}
+        \end{equation*}
+        下面我们讨论误差函数$\varepsilon_n(x)=S_n(x)-S(x)$在$x=0$右邻域的性态，左领域的讨论是类似的。根据计算可以得出
+        \begin{equation*}
+            \varepsilon_n(x)=S_n(x)-S(x)=\frac{4}{\pi}\sum_{k=1}^{n}\frac{\sin (2k-1)x}{2k-1}-1,\quad x\in U_+(0)
+        \end{equation*}
+        则在零点的右邻域有
+        \begin{align*}
+            \frac{d \varepsilon_n(x)}{dx}&=\frac{4}{\pi}\sum_{k=1}^{n}\cos\left(2k-1\right)x=\frac{4}{\pi}\sum_{k=1}^{n}\frac{\cos\left(2k-1\right)x\sin x}{\sin x}\\
+            &=\frac{4}{\pi}\sum_{k=1}^{n}\frac{1}{2}\frac{\sin 2kx-\sin (2k-2)x}{\sin x}=\frac{2}{\pi}\frac{\sin 2nx}{\sin x}
+        \end{align*}
+        则函数的极值点为 \(x_n^{(m)} = m\pi/2n, m = 1, 2, \ldots,2n\)，其中当 \(m\) 是奇数的时候是极大值点，当 \(m\) 是偶数的时候是极小值点。由于我们考虑的是$0$点的充分小的右邻域中的点，因此我们选取$x_0=x_n^{(1)}=\pi/2n$，
+        下面计算误差函数在该点上的值：
+        \begin{align*}
+            \varepsilon_n(x_0) & = S_n(x_0) - S(x_0) \\
+            & = \frac{4}{\pi}\sum_{k=1}^n \frac{\sin(2k-1)x_0}{2k-1} - 1 \\
+            & = \frac{4}{\pi}\sum_{k=1}^n \frac{\sin(2k-1)x_0}{(2k-1)x_0}x_0 - 1
+        \end{align*}
+        由于上式中$x_0=\pi/2n$，因此可以得到
+        \begin{equation} \label{误差函数的估计1}
+            \varepsilon_n(x_0)=\frac{2}{\pi}\sum_{k=1}^n \frac{\sin\frac{(2k-1)}{2n}\pi}{\frac{(2k-1)}{2n}\pi}\frac{\pi}{n} - 1
+        \end{equation}
+        根据黎曼积分的定义
+        \begin{equation*}
+            \int_{a}^{b}f(x)dx=\lim_{\|T\|\to0}\sum_{i=1}^{n}f(\xi_i )\Delta x_i
+        \end{equation*}
+        如果将$[0,\pi]$分成$n$个小区间$0<\frac{\pi}{n}<\frac{2\pi}{n}<\cdots<\frac{n-1}{n}\pi<\pi$，其中$\frac{(2k-1)}{2n}\pi$分别处于不同的小区间内，当$n$趋于无穷大时，则(\ref{误差函数的估计1})式变为
+        \begin{equation*}
+            \lim_{n \to \infty} \varepsilon_n(x_0) = \frac{2}{\pi}\int_0^{\pi} \frac{\sin x}{x} dx - 1
+        \end{equation*}
+        使用数值计算方法可以得到上面这个极限的值约为$0.179$。
+        \begin{figure}[h]
+            \centering
+            \includegraphics[width=10cm]{方波.png}
+            \caption{方波的图像}
+        \end{figure}
+
+        根据上图我们可以看出，随着部分傅里叶级数的求和项增加，零点领域附近的点，其傅里叶级数部分求和与函数值有较大的误差，这是因为傅里叶级数在零点附近不一致收敛，导致这种现象的更深层的原因是我们试图
+        用一个解析函数来逼近不连续函数。同时通过图像可以看到误差的极值大概在0.2左右，这也验证了我们的计算。在实际应用中，对于这种情况需要使用特别的处理方法来减少吉布斯现象而引起的误差。
+
+    \newpage
+
+    %第四章内容
+    \section{处处连续但处处不可导的函数}
+        让我们回顾狄利克雷定理的条件，对于一个分段光滑的规则函数来说，其傅里叶级数等于其每一点处左极限和右极限的平均值。乍一看，这样的条件是十分普遍的，在我们的认知中，我们所处理的函数
+        一般都是连续或者分段连续的。关于光滑性的条件似乎也是十分容易满足的，到目前为止，我们所接触的函数都是分段光滑的，其不可导点
+        最多只有可列多个。
+        
+        事实上，在19世纪之前，绝大多数数学家也认为处处连续且处处不可导的函数并不存在，尽管没有人可以证明这一结论。然而，19世纪魏尔斯特拉斯发现了第一个处处连续且处处不可导的函数。本章我们
+        我们会研究魏尔斯特拉斯函数，并给出其他病态函数的例子。
+        \subsection{魏斯特拉斯函数}
+        在数学分析的发展过程中，数学家们一直猜测：连续函数在其定义域内，至少除去可列个点外都是可导的。也就是说，连续函数不可导点至多使可列集。
+        然而，魏尔斯特拉斯对上述的猜测给出了反例，在魏尔斯特拉斯的原始文献中，这个函数被定义为一个傅里叶级数：
+        \begin{equation} \label{魏尔斯特拉斯函数}
+            W(x)=\sum_{n=0}^{\infty}a^n\cos\left(b^n\pi x\right)
+        \end{equation}
+        其中$0<a<1$，$b$为正奇数，使得$ab>1+\frac{3\pi}{2}$，满足这个条件的$b$的至少为$7$。
+        
+        下面我们将给出一个定理，利用它来说明魏尔斯特拉斯函数的连续性。
+        \begin{定理}  \label{一致收敛的连续性}
+            若函数项$\sum u_n(x)$在区间$I$上一致收敛，且每一项在$I$上都连续，则其和函数$S(x)$在$I$上连续。
+        \end{定理}
+        \begin{proof}
+            要证和函数在$I$上连续，则要证：
+            对$\forall \varepsilon>0,\exists \delta >0$，对$\forall x\in I$满足$|x-x_0|<\delta$，有
+            \begin{equation*}
+                \left|S(x)-S(x_0)\right|<\varepsilon
+            \end{equation*}
+            根据函数项$\sum u_n(x)$在区间$I$上一致收敛可知，对$\forall x,x_0\in I$，则满足：对$\forall \varepsilon>0,\exists N_0 >0$，对$\forall n>N_0$，有
+            \begin{equation*}
+                \left|S_n(x)-S(x)\right|<\frac{\varepsilon}{3}
+            \end{equation*}
+            \begin{equation*}
+                \left|S_n(x_0)-S(x_0)\right|<\frac{\varepsilon}{3}
+            \end{equation*}
+            又根据函数项的连续性推得，对$\forall \varepsilon>0,\exists \delta_0 >0$，对$\forall x\in I$满足$|x-x_0|<\delta_0$，则
+            \begin{equation*}
+                \left|S_n(x)-S_n(x_0)\right|<\frac{\varepsilon}{3}
+            \end{equation*}
+            则只需取$\delta=\delta_0,N=N_0$，即得
+            \begin{align*}
+                \left|S(x)-S(x_0)\right|&=\left|S(x)-S_n(x)+S_n(x)-S_n(x_0)+S_n(x_0)-S(x_0)\right|\\
+                &\leqslant\left|S(x)-S_n(x)\right|+\left|S_n(x)-S_n(x_0)\right|+\left|S_n(x_0)-S(x_0)\right|<\varepsilon
+            \end{align*}
+        \end{proof}
+        下面回到魏尔斯特拉斯函数的讨论中，有了上面的定理，那么我们只需要证明函数项在$\mathbb{R}$是一致收敛的，而函数项的部分和在$\mathbb{R}$上显然是连续的。
+        对于一致连续性的讨论，我们可以用魏尔斯特拉斯判别法证明函数项级数(\ref{魏尔斯特拉斯函数})在$\mathbb{R}$上是一致收敛的。
+
+        由于对任意$n\geqslant1$，满足
+        \begin{equation*}
+            \left|a^n\cos\left(b^n\pi x\right)\right|\leqslant a^n
+        \end{equation*}
+        而$0<a<1$，因此等比数列$\sum_{n=1}^{\infty}a^n$收敛，从而推出级数(\ref{魏尔斯特拉斯函数})在$\mathbb{R}$上是绝对一致收敛的。再根据定理\ref{一致收敛的连续性} 推出和函数(\ref{魏尔斯特拉斯函数})是连续的。
+
+        \subsection{处处不可导的证明}
+        下面证明魏尔斯特拉斯函数在$\mathbb{R}$上处处不可导。
+        \begin{proof}[证明不可微性]
+            即对 $\forall x_0 \in \mathbb{R}$，极限 $\lim_{x \to x_0} \frac{f(x)-f(x_0)}{x-x_0}$ 不存在。
+            随便令一个 $x_0 \in \mathbb{R}$，则对于 $\forall m \in \mathbb{R}$，我们取 $\alpha_m \in \mathbb{Z}$ 使得：
+            \begin{equation}
+                b^m x_0 - \alpha_m \in \left(-\frac{1}{2}, \frac{1}{2}\right]
+            \end{equation}
+            我们记 $x_m, y_m, z_m$ 为：
+            \begin{equation*}
+                x_m = b^m x_0 - \alpha_m , \quad
+                y_m = \frac{\alpha_m - 1}{b^m} , \quad
+                z_m = \frac{\alpha_m + 1}{b^m}
+            \end{equation*}
+            容易发现: $y_m - x_0 = -\frac{1 + x_m}{b^m} < 0 < \frac{1 - x_m}{b^m} = z_m - x_0$。
+            这说明当$y_m < x_0 < z_m$时, 必然有
+            \begin{equation*}
+                \lim_{m \to \infty}|y_m - x_0| = \lim_{m \to \infty}x_0 - y_m = \lim_{m \to \infty}\frac{1 + x_m}{b^m} = 0
+            \end{equation*}
+            \begin{equation*}
+                \lim_{m \to \infty}|z_m - x_0| = \lim_{m \to \infty}z_m - x_0 = \lim_{m \to \infty}\frac{1 - x_m}{b^m} = 0
+            \end{equation*}
+            所以数列$y_m$和$z_m$都趋近于$x_0$, 只不过一个从$x_0$的右邻域趋近, 另一个从$x_0$的左邻域趋近。因此我们有等式
+            \begin{align*}
+                f(y_m) - f(x_0) &= \frac{\displaystyle\sum_{n=0}^{\infty}a^n \cos(b^n \pi y_m) - \sum_{n=0}^{\infty}a^n \cos(b^n \pi x_0)}{y_m - x_0}=\sum_{n=0}^{\infty}a^n \frac{\cos(b^n \pi y_m) - \cos(b^n \pi x_0)}{y_m - x_0}\\
+                &=\sum_{n=0}^{m-1}(ab)^n \frac{\cos(b^n \pi y_m) - \cos(b^n \pi x_0)}{b^n (y_m - x_0)}+ \sum_{n=0}^{\infty}a^{n+m} \frac{\cos(b^{n+m} \pi y_m) - \cos(b^{n+m} \pi x_0)}{y_m - x_0}
+            \end{align*}
+            将上式的两个部分的求和分别记作$S_1,S_2$，即$f(y_m) - f(x_0)=S_1+S_2$，
+            对于$S_1$
+            \begin{align*}
+                S_1 &= \sum_{n=0}^{m-1}(ab)^n \frac{-2}{b^n(y_m - x_0)}\sin\left(\frac{b^n\pi(y_m + x_0)}{2}\right)\sin\left(\frac{b^n\pi(y_m - x_0)}{2}\right)\\
+                &= \sum_{n=0}^{m-1}-\pi(ab)^n \sin\left(\frac{b^n\pi(y_m + x_0)}{2}\right)\frac{\sin\left(\frac{b^n\pi(y_m - x_0)}{2}\right)}{\frac{\pi b^n(y_m - x_0)}{2}}
+            \end{align*}
+            由于$|\frac{\sin x}{x}| < 1$且$|\sin x| < 1$,所以
+            \begin{equation*}
+                |S_1| \leqslant \sum_{n=0}^{m-1}\pi(ab)^n1·1=\pi\frac{(ab)^{m}-1}{ab-1}<\pi\frac{(ab)^{m}}{ab-1}
+            \end{equation*}
+            所以存在$\varepsilon_1\in(-1,1)$使得$S_1 = \varepsilon_1\pi\frac{(ab)^{m}}{ab-1}$。
+            现在，我们来研究$S_2$。我们有
+            \begin{equation*}
+                \cos(b^{n+m}\pi y_m)=\cos(b^n\pi (\alpha_m-1))=(-1)^{b^n(a_m-1)}=(-1)^{a_m-1}
+            \end{equation*}
+            以及
+            \begin{align*}
+                &\cos(b^{n+m}\pi x_0)= \cos(b^n\pi(x_m+\alpha_m))\\
+                =& \cos(b^n\pi x_m)\cos(b^n\pi\alpha_m)-\sin(b^n\pi x_m)\sin(b^n\pi\alpha_m)\\
+                =&(-1)^{b^n\alpha_m} \cos(b^n\pi x_m)=(-1)^{\alpha_m} \cos(b^n\pi x_m)
+            \end{align*}
+            所以
+            \begin{align*}
+                &S_2 = \sum_{n=0}^{\infty} a^{n+m} \frac{-(-1)^{\alpha_m}-(-1)^{\alpha_m} \cos(b^n\pi x_m)}{y_m - x_0}\\
+                =&\sum_{n=0}^{\infty} a^{n+m} (-1)(-1)^{\alpha_m} \frac{1 + \cos(b^n\pi x_m)}{\frac{1+x_m}{b^m}}=(ab)^m (-1)^{\alpha_m} \sum_{n=0}^{\infty} a^n \frac{1 + \cos(b^n\pi x_m)}{1 + x_m}
+            \end{align*}
+            而其中
+            \begin{equation*}
+                \sum_{n=0}^{\infty} a^n \frac{1 + \cos(b^n\pi x_m)}{1 + x_m} \geqslant \frac{1 + \cos(\pi x_m)}{1 + x_m} \geqslant \frac{1}{1 + \frac{1}{2}} = \frac{2}{3}
+            \end{equation*}
+            所以存在 $\eta_1 \geq 1$ 使得 $S_2 = \frac{2}{3}\eta_1(ab)^m(-1)^{\alpha_m}$。再将 $S_1$ 与 $S_2$ 合并, 我们有
+            \begin{align*}
+                \frac{f(y_m) - f(x_0)}{y_m - x_0} &= S_1 + S_2 
+                = \varepsilon_1 \frac{\pi(ab)^m}{ab - 1} + (ab)^m(-1)^{\alpha_m}\eta_1 \frac{2}{3}\\
+                &= (-1)^{\alpha_m}(ab)^m\eta_1 \left( \frac{2}{3} + (-1)^{\alpha_m}\frac{\varepsilon_1}{\eta_1}\frac{\pi}{ab - 1} \right)
+            \end{align*}
+            由条件 $ab > 1 + \frac{3}{2}\pi$ 可知 $\frac{\pi}{ab - 1} < \frac{2}{3}$。由于 $\varepsilon_1 \in (-1, 1),\eta_1 \geq 1$ 
+            \begin{equation*}
+                \frac{2}{3} + (-1)^{\alpha_m}\frac{\varepsilon_1}{\eta_1}\frac{\pi}{ab - 1}>\frac{2}{3}-\frac{\pi}{ab-1}>0
+            \end{equation*}
+            因此，$\frac{f(y_m) - f(x_0)}{y_m - x_0}$ 的符号被 $(-1)^{\alpha_m}$ 所决定。并且
+            \begin{equation*}
+                \left| \frac{f(y_m) - f(x_0)}{y_m - x_0} \right|> (ab)^m \left( \frac{2}{3} - \frac{\pi}{ab - 1} \right)
+            \end{equation*}
+            上式左边的值随着$m$的增大无上界，已经可以看出来 $\lim_{y_m \to x_0} \frac{f(y_m) - f(x_0)}{y_m - x_0}$ 不存在了。用同样的方法，我们也可以证明极限$\lim_{z_m\to x_0}\frac{f(z_m) - f(x_0)}{z_m - x_0}$同样不存在。\\
+        \end{proof}
+        \begin{figure}[h]
+            \centering
+            \includegraphics[width=10cm]{Weierstrass.png}
+            \caption{魏尔斯特拉斯函数的大致图像}
+        \end{figure}
+        从上面的图像可以看出魏尔斯特拉斯函数是连续的，但每一点都不光滑，其局部图像经过放大后和整体相似。魏尔斯特拉斯函数不仅可以用于理论分析中，在信号处理方面可以启发人们设计滤波器和处理噪声。
+
+        \subsection{takagi函数}
+        自从1861年魏尔斯特拉斯发现了上面我们所述的处处不可导的函数之后，在数学界掀起了一股寻找类似函数的热潮。而takagi函数就是在这一段时间内提出的。高木贞治在1903年提出了这一函数之后，这一函数在数学中的各个领域都有所应用。
+        事实上，takagi函数函数与魏尔斯特拉斯后来被发现都能被列入同一个函数框架之中，即
+        \begin{equation*} \label{不可导函数构型}
+            F(x)=\sum_{k=0}^{\infty}a^k\phi (b^kx)
+        \end{equation*}
+        这类函数在满足一定条件下都具备处处不可微性。
+        
+        高木贞治最开始是使用了二进制的概念来构造takagi函数，因此我们简单介绍以下二进制的概念。
+        \begin{定义}
+            任意在$[0,1]$上的实数$x$可以被写作下面的形式：
+            \begin{equation*}
+                x=\sum_{j=1}^{\infty}\frac{b_j}{2^j}=0.b_1b_2b_3\cdots\qquad  b_j\in\{0,1\}
+            \end{equation*}
+            则称$0.b_1b_2b_3\cdots$为$x$的二进制展开。
+        \end{定义}
+        基于上面的定义，下面我们讨论的变量$x$都是二进制展开形式的。下面我们再定义用于构造takagi函数的一个重要函数。
+        \begin{equation*}
+            \phi(x)=
+            \begin{cases}
+                x& 0\leqslant x<\frac{1}{2}\quad \text{i.e.}\,b_1=0\\
+                1-x &\frac{1}{2}\leqslant x\leqslant 1\quad \text{i.e.}\,b_1=1
+            \end{cases}
+            \quad x\in[0,1]
+        \end{equation*}
+        上面函数的具体意义可以理解为，任给$[0,1]$上的一个实数，$\phi(x)$即为该实数到最近的整数的距离。有了这一概念，那么我们可以将该函数延拓到实轴上，并且在延拓后该函数在$\mathbb{R}$上是连续的。特别地，有
+        \begin{equation*}
+            \phi(2^nx)=
+            \begin{cases}
+                0.b_{n+1}b_{n+2}b_{n+3}\cdots\quad b_{n+1}=0\\
+                0.\overline{b}_{n+1}\overline{b}_{n+2}\overline{b}_{n+3}\cdots \quad b_{n+1}=1
+            \end{cases}
+        \end{equation*}
+        其中$\overline{b}=1-b,b\in\{0,1\}$。有了上面的这些概念，我们可以给出takagi函数的一个定义。
+        \begin{定义}
+            定义在$[0,1]$上的函数
+            \begin{equation*}
+                \tau(x)=\sum_{n=0}^{\infty}\frac{\phi(2^nx)}{2^n} \quad x\in[0,1]
+            \end{equation*}
+            被称为takagi函数。
+        \end{定义}
+        上面的函数项级数是一致收敛的，这是因为$\phi(x)\leqslant\frac{1}{2}$，由于其优级数$\sum_{k=1}^{\infty}\frac{1}{2^k}$收敛，因此由魏尔斯特拉斯判别法可知函数项级数收敛，并且由于$\phi$在定义域上连续，因此takagi函数在$[0,1]$上是一致连续的。上面的这种构造方法便于使用计算机通过迭代求和来进行对takagi函数的逼近。即通过部分和函数来逼近takagi函数，部分和函数为
+        \begin{equation*}
+            \tau_n(x)=\sum_{k=0}^{n}\frac{\phi(2^kx)}{2^k}
+        \end{equation*}
+        图\ref{takagi函数} 即展示了100项部分和来逼近的takagi函数，从大致的图像我们即可看出其连续性和不可微性。
+        \begin{figure}[h] 
+            \centering
+            \includegraphics[width=10cm]{takagi.png}
+            \caption{100项部分和的takagi函数}
+            \label{takagi函数}
+        \end{figure}
+
+        事实上，1903年高木贞治使用了另一种构造方法。在给出takagi函数的原始定义之前，我们先推出几个概念。
+        \begin{定义}
+            假设$[0,1]$上的实数$x$的二进制展开为：$\sum_{j=1}^{\infty}\frac{b_j}{2^j}=0.b_1b_2b_3\cdots$，其中$b_j\in\{0,1\},\forall j\geqslant1$。则称
+            \begin{equation*}
+                N_j^1(x)=\sum_{k=1}^{j}b_j
+            \end{equation*}
+            为数字求和函数。
+        \end{定义}
+        这个函数的具体意义是$x$的二进制展开的小数点后$j$位一共有多少个$1$元素。那么类似的，我们还能定义$N_j^0(x)=j-N_j^1(x)$。通过数字求和函数，我们再给出另一个函数概念。
+        \begin{定义}
+            对$\forall x\in[0,1]$，定义
+            \begin{equation*}
+                \ell_{m+1}(x)=
+                \begin{cases}
+                    N_m^1(x)&b_{m+1}=0\\
+                    m-N_m^1(x)&b_{m+1}=1
+                \end{cases}
+            \end{equation*}
+            为数字异或函数。
+        \end{定义}
+        上面的定义还可以简写成
+        \begin{equation*}
+            \ell_{m+1}(x)=\left\{\left.\sum^{m} i\right|0\leqslant i\leqslant m,b_i\neq b_{m+1}\right\}
+        \end{equation*}
+        简单来说，上面的函数表示的是$x$的二进制展开的小数点后$m$位数字中与第$m+1$位数字不同的数字个数。最后，我们给出高木贞治对于takagi函数的原始构造。
+        \begin{定义}[高木贞治 1903]
+            对于$x=0.b_1b_2b_3\cdots$，takagi函数被定义为
+            \begin{equation*}
+                \tau(x)=\sum_{m=1}^{\infty}\frac{\ell_m}{2^m}
+            \end{equation*}
+        \end{定义}
+        如果将takagi函数延拓到$\mathbb{R}$上，其周期为$1$，我们可以得到其傅里叶级数。具体的方法是，由于takagi函数可以表示为
+        \begin{equation*}
+            \tau(x)=\sum_{n=0}^{\infty}\frac{\phi(2^nx)}{2^n}
+        \end{equation*}
+        因此$c_k=\int_{-\frac{1}{2}}^{\frac{1}{2}}\tau(x)e^{-2\pi ikx}dx$，由于takagi函数是一致收敛的，因此这个式子的积分号与求和符号可以交换位置，即
+        \begin{equation*}
+            c_k=\sum_{n=0}^{\infty}\frac{1}{2^n}\int_{-\frac{1}{2}}^{\frac{1}{2}}\phi(2^nx)e^{-2\pi ikx}dx=\sum_{n=0}^{\infty}\frac{b_k^n}{2^n}
+        \end{equation*}
+        然而，$b_k^n$的求解有一定的困难，这里我们查阅资料后，直接给出takagi函数的傅里叶级数。
+        
+        当$n=\pm 2^m(2k+1)$时
+        \begin{equation*}
+            c_n=-\frac{1}{2^m(2k+1)^2\pi^2}
+        \end{equation*}
+        $m$为任给的自然数。
+
+        在证明takagi函数的不可导性之前，我们先给出下面的定理。
+        \begin{定理}  \label{数列极限的导数}
+            对$\forall n\in\mathbb{N}$，任给数列满足$a< a_n\leqslant x\leqslant b_n< b$，且$a_n\rightarrow x,b_n\rightarrow x$，若函数$f$在$[a,b]$上可导，则有
+            \begin{equation*}
+                \lim_{n\to\infty}\frac{f(b_n)-f(a_n)}{b_n-a_n}=f'(x)
+            \end{equation*}
+        \end{定理}
+        \begin{proof}
+            由于$f$在$[a,b]$上可导，则对任意$x\in[a,b]$，存在极限
+            \begin{equation*}
+                \lim_{y\to x}\frac{f(y)-f(x)}{y-x}=f'(x)
+            \end{equation*}
+            根据海涅定理，对任意满足$x_n\in[a,b],\forall n>0$，有$ x_n\rightarrow x,n\rightarrow \infty$，则必有
+            \begin{equation}\label{海涅定理}
+                \lim_{n\to\infty}\frac{f(x_n)-f(x)}{x_n-x}=f'(x)
+            \end{equation}
+            因此考虑
+            \begin{align*}
+                \left|\frac{f(b_n)-f(a_n)}{b_n-a_n}-f'(x)\right|&=\left|\frac{f(b_n)-f(x)}{b_n-a_n}-\frac{b_n-x}{b_n-a_n}f'(x)+\frac{f(x)-f(a_n)}{b_n-a_n}-\frac{x-a_n}{b_n-a_n}f'(x)\right|\\
+                &\leqslant\left|\frac{b_n-x}{b_n-a_n}\left(\frac{f(b_n)-f(x)}{b_n-x}-f'(x)\right)\right|+\left|\frac{x-a_n}{b_n-a_n}\left(\frac{f(x)-f(a_n)}{x-a_n}-f'(x)\right)\right|
+            \end{align*}
+            由于$a_n\leqslant x\leqslant b_n$，因此$\frac{b_n-x}{b_n-a_n}\leqslant1,\frac{x-a_n}{b_n-a_n}\leqslant1$，因此上式变成
+            \begin{equation*}
+                \left|\frac{f(b_n)-f(a_n)}{b_n-a_n}-f'(x)\right|\leqslant\left|\frac{f(b_n)-f(x)}{b_n-x}-f'(x)\right|+\left|\frac{f(x)-f(a_n)}{x-a_n}-f'(x)\right|            
+            \end{equation*}
+            由(\ref{海涅定理})可知，当$n\rightarrow \infty$时上面不等式右边的值为$0$，因此即可得到
+            \begin{equation*}
+                \lim_{n\to\infty}\frac{f(b_n)-f(a_n)}{b_n-a_n}=f'(x)
+            \end{equation*}
+            这样就得到了定理结论。\\
+        \end{proof}
+
+        有了上面的结论，下面我们给出takagi函数具有无穷多个不可微点的证明。
+        \begin{proof}[反证法]
+            不失一般性地，我们只考虑takagi函数在$(0,1)$上的情况。假设存在的$x\in (0,1)$，使得takagi函数在这一点可导。由定理\ref{数列极限的导数} 的结论，对于任给
+            的数列满足$0<a_n\leqslant x\leqslant b_n<1$，必然有
+            \begin{equation*}
+                \lim_{n\to\infty}\frac{\tau(b_n)-\tau(a_n)}{b_n-a_n}=\tau'(x)
+            \end{equation*}
+            我们考虑一组集合
+            \begin{equation*}
+                \mathcal{D}_n=\{\frac{i}{2^n}|i\in\mathbb{Z},0\leqslant i\leqslant 2^n\}\subset[0,1]\qquad n\in\mathbb{N}
+            \end{equation*}
+            因此对于任意的$x\in(0,1)$，必然存在$i\in \mathbb{Z}$，使得$\frac{i-1}{2^n}\leqslant x<\frac{i}{2^n}$，则令$a_n=\frac{i-1}{2^n},b_n=<\frac{i}{2^n}$。我们考虑$\phi(2^k a_n)$以及$\phi(2^k b_n)$，当$k\geqslant n$时，
+            $2^ka_n,2^kb^n$均为整数，因此$\phi(2^k a_n)=\phi(2^k b_n)=0,k\geqslant n$。这样，takagi函数在$a_n,b_n$上的值变为
+            \begin{equation*}
+                \tau(a_n)=\sum_{k=0}^{n-1}\frac{\phi(2^ka_n)}{2^k}\qquad\tau(b_n)=\sum_{k=0}^{n-1}\frac{\phi(2^kb_n)}{2^k}
+            \end{equation*}
+            因此
+            \begin{equation*}
+                \frac{\tau(b_n)-\tau(a_n)}{b_n-a_n}=\sum_{k=0}^{n-1}\frac{1}{2^k}\frac{\phi(2^kb_n)-\phi(2^ka_n)}{b_n-a_n}
+            \end{equation*}
+            由于$b_n-a_n=\frac{1}{2^n}$，并且$\phi(x)$在$[2^ka_n,2^kb_n]$上一定是线性的$(k<n)$，否则，即存在一点$\frac{m}{2},m\in\mathbb{Z}$，使得$2^ka_n<\frac{m}{2}<2^kb_n$，也就是$\frac{i-1}{2^{n-k-1}}<m<\frac{i}{2^{n-k-1}},(n-k-1\geqslant 0)$，不可能成立。
+
+            又因为
+            \begin{equation*}
+                \phi(x)=
+                \begin{cases}
+                    x-m&x\in[\frac{m}{2},\frac{m+1}{2}],m\text{为偶数}\\
+                    -x+m&x\in[\frac{m}{2},\frac{m+1}{2}],m\text{为奇数}
+                \end{cases}
+            \end{equation*}
+            因此$\phi(2^kb_n)-\phi(2^ka_n)=\pm\frac{1}{2^{n-k}}$，正负号的情况具体看$b_n$和$a_n$的选取。由此我们得到
+            \begin{equation*}
+                \frac{\tau(b_n)-\tau(a_n)}{b_n-a_n}=\sum_{k=0}^{n-1}\pm1
+            \end{equation*}
+            当$n\rightarrow \infty$时$\sum_{k=0}^{\infty}\pm1$并不存在，即$\tau'(x)$不存在，而满足这个式子$b_n,a_n$是无穷多个的，因此我们就证明了takagi函数具有无穷多个不可导点。\\
+        \end{proof}
+
+        值得注意的是，上面的结论并没有告诉我们takagi函数处处不可导，这是因为它不满足函数构型(\ref{不可导函数构型})中处处不可导的条件，因此我们只能认为其不可导点有无穷多个。
+
+        在上一章我们讨论过傅里叶级数收敛的一些条件，对于魏尔斯特拉斯函数以及takagi函数来说，虽然它们都是在定义域上连续，然而却处处不可微的，因此不满足狄利克雷条件。因此尽管他们的傅里叶级数都存在，然而其收敛的
+        的性质是十分微妙的。根据我们对好核的讨论，那么如果我们想利用傅里叶级数来进行逼近，我们可以使用费耶尔核来达到这一目的。
+
+
+
+
+
+    \newpage
+    %第五章内容
+    \section{傅里叶级数的应用举例}
+        本章中，我们会介绍傅里叶级数的具体应用，，这些应用在理论研究中都具有重要意义。我们选取了两个具体的应用，第一个是关于线性偏微分方程的求解，事实上，傅里叶当年就是在求解热传导的
+        偏微分方程中发现的傅里叶级数，这些方程在理论和工程上都具有着重要的意义。第二个应用是关于巴塞尔问题的求解，这在17世纪是一个著名的数学难题，最终被18世纪被欧拉解决，下面我们会看到，利用傅里叶级数来求解巴塞尔问题是
+        十分简单的。
+        \subsection{偏微分方程的求解}
+        考虑如下弦振动方程初边值问题：
+        \begin{equation}  \label{偏微分方程}
+            \begin{cases}
+                \displaystyle \frac{\partial^2 u }{\partial t^2}=a^2\frac{\partial^2 u}{\partial x^2},& 0<x<l,t>0 \\
+                u(x,0)=\varphi(x),& 0\leqslant  x\leqslant  l\\
+                u_t(x,0)=\psi (x),& 0\leqslant  x\leqslant  l\\
+                u|_{x=0}=u|_{x=l}=0,&t>0
+            \end{cases}
+        \end{equation}\\
+        设问题(\ref{偏微分方程})有如下形式的非零解
+        $$u(x,t)=X(x)T(t)$$
+        其中$X(x)\neq0,T(t)\neq0$，带入(\ref{偏微分方程})的方程有
+        $$XT^{''}=a^2X^{''}T$$
+        两边同除$X(x)T(t)$得到
+        \begin{equation} \label{分离变量}
+            \frac{T^{''}}{a^2 T}=\frac{X^{''}}{X}
+        \end{equation}
+        因(\ref{分离变量})式的左端为时间$t$的函数，左边为关于位移变量$x$的函数，因此等式两端必为一个常数，记作$-\lambda $，即
+        $$ \frac{T''}{a^2 T}=\frac{X^{''}}{X}=-\lambda$$  \label{lambda的来源}
+        对于常数$\lambda$有如下结论
+        \begin{命题}
+            由(\ref{偏微分方程})分离变量导出的常数$\lambda$为实数
+        \end{命题}
+
+        \begin{proof}
+            由于
+            \begin{equation*}
+                \frac{X^{''}}{X}=-\lambda
+            \end{equation*}
+            得到
+            \begin{equation} \label{固有问题1}
+                X^{''}+\lambda X=0
+            \end{equation}
+            再将$u(x,t)=X(x)T(t)$带入(\ref{偏微分方程})中的边界条件即得到
+            \begin{equation} \label{固有问题2}
+                X(0)=X(l)=0
+            \end{equation}
+            由(\ref{固有问题1})和(\ref{固有问题2})得到以下固有值问题
+            \begin{equation}  \label{固有值问题1}
+                \begin{cases}
+                    X^{''}+\lambda X=0 \\
+                    X(0)=X(l)=0
+                \end{cases}
+            \end{equation}
+            再将(\ref{固有值问题1})取共轭
+            \begin{equation}   \label{固有值问题2}
+                \begin{cases}
+                    \overline{X}^{''}+\overline{\lambda}\overline{X}=0 \\
+                    \overline{X}(0)=\overline{X}(l)=0
+                \end{cases}
+            \end{equation}
+            将式(\ref{固有值问题1})乘以$\overline{X}$，再将式(\ref{固有值问题2})乘以$X$
+            \[\begin{cases}
+                \overline{X}X^{''}+\lambda\overline{X}X=0 \\
+                X\overline{X}^{''}+\overline{\lambda} X\overline{X}=0
+            \end{cases}\]
+            上面两式相减并在$[0,l]$上积分得到
+            \begin{equation*}
+                \int_0^l \left(X\overline{X}^{''}-\overline{X}X^{''}\right)+\left(\overline{\lambda}X\overline{X}-\lambda\overline{X}X\right)dx=0
+            \end{equation*}
+            因为
+            \begin{align*}
+                \int_0^l X\overline{X}^{''}-\overline{X}X^{''}dx&=\left.\left(X\overline{X}'-\overline{X}X'\right)\right|_0^l-\int_0^l \overline{X}'X'-X'\overline{X}'dx \\
+                &=\left.\left(X\overline{X}'-\overline{X}X'\right)\right|_0^l
+            \end{align*}
+            由(\ref{固有值问题1})和(\ref{固有值问题2})的边界条件我们知道
+            \begin{align*}
+                \left.\left(X\overline{X}'-\overline{X}X'\right)\right|_0^l=0
+            \end{align*}
+            因此
+            \begin{equation*}
+                \int_0^l X\overline{X}^{''}-\overline{X}X^{''}dx=0
+            \end{equation*}
+            所以
+            \begin{equation*}
+                \int_0^l \overline{\lambda}X\overline{X}-\lambda\overline{X}Xdx=\int_0^l \left(\overline{\lambda}-\lambda\right) X\overline{X}dx=\left(\overline{\lambda}-\lambda\right)\int_0^l X\overline{X}dx=0
+            \end{equation*}
+            由于$X\overline{X}>0$，因此$\overline{\lambda}-\lambda=0$，即得到$\overline{\lambda}=\lambda$，这样就证明了$\lambda$为实数。
+        \end{proof}
+
+        
+        我们考虑(\ref{固有值问题1})式，下面我们讨论$\lambda$的取值情况。
+
+        当$\lambda<0$时，$X(x)=C_1e^{\sqrt{-\lambda}x}+C_2e^{-\sqrt{-\lambda}x}$，带入边界条件得
+        \[
+        \begin{cases}
+            C_1+C_2=0 \\
+            C_1e^{\sqrt{-\lambda}l}+C_2e^{-\sqrt{-\lambda}l}=0
+        \end{cases}
+        \]
+        解得$C_1=C_2=0$，此时固有值问题无非零解。
+
+        当$\lambda=0$，$X=C_1x+C_2$，带入边界条件得$C_1=C_2=0$，这时固有值问题也无非零解。
+
+        当$\lambda>0$，$X(x)=C_1\cos\sqrt{\lambda}x+C_2\sin\sqrt{\lambda}x$，由边界条件$X(0)=0$可知$C_1=0$。由$X(l)=0$可知$C_2\sin\sqrt{\lambda}l=0$,
+        想要求得非零解，即$C_2\neq0$，因此$\sin\sqrt{\lambda}l=0$，解得$\sqrt{\lambda}l=k\pi(k=1,2,\cdots)$，因此
+        \begin{equation}  \label{lambda的值}
+            \lambda_k=\left(\frac{k\pi}{l}\right)^2 \qquad (k=1,2,\cdots)
+        \end{equation}
+        此时固有值问题的非零解为
+        \begin{equation}   \label{X的解}
+            X_k=\sin\frac{k\pi}{l}x \qquad (k=1,2,\cdots)
+        \end{equation}
+        我们将结果(\ref{X的解})带入(\ref{lambda的来源})得
+        \begin{equation}
+                T_k^{''}(t)+\left(\frac{k\pi a}{l}\right)^2T_k(t)=0
+        \end{equation}
+        解之得
+        \begin{equation}  \label{T的解}
+            T_k(t)=A_k\cos\frac{k\pi}{l}at+B_k\sin\frac{k\pi}{l}at \qquad (k=1,2,\cdots)
+        \end{equation}
+        因此我们得到一系列的解
+        \begin{equation*}
+            u_k(x,t)=X_kT_k=\left(A_k\cos\frac{k\pi}{l}at+B_k\sin\frac{k\pi}{l}at\right)\sin\frac{k\pi}{l}x  \qquad (k=1,2,\cdots)
+        \end{equation*}
+        由线性方程的叠加原理，得到问题(\ref{偏微分方程})的解为
+        \begin{equation}  \label{偏微分方程的解1}
+            u(x,t)=\sum_{k=1}^{\infty}u_k(x,t)=\sum_{k=1}^{\infty}\left(A_k\cos\frac{k\pi}{l}at+B_k\sin\frac{k\pi}{l}at\right)\sin\frac{k\pi}{l}x 
+        \end{equation}
+        我们再根据方程(\ref{偏微分方程})的初始条件求解$A_k$，$B_k$
+        由$u(x,0)=\varphi(x)$得到
+        \begin{equation}  \label{varphi的傅里叶级数}
+            u(x,0)=\varphi(x)=\sum_{k=1}^{\infty}A_k\sin\frac{k\pi}{l}x
+        \end{equation}
+        上式可以看作$\varphi(x)$在正交函数系$\displaystyle \left\{\sin\frac{k\pi}{l}x\right\}_1^\infty$下的傅里叶级数展开，方程(\ref{varphi的傅里叶级数})两边同乘$\displaystyle \sin\frac{k\pi}{l}x$并在区间$[0,l]$上积分，由三角函数系的正交性可以解得
+        \begin{equation}  \label{A的解}
+            A_k=\frac{2}{l}\int_0^l\varphi(x)\sin\frac{k\pi}{l}xdx  \qquad (k=1,2,\cdots)
+        \end{equation}
+        同理，由$u_t(x,0)=\psi(x)$得
+        \begin{equation}
+            \psi(x)=\sum_{k=1}^{\infty}B_k\frac{k\pi a}{l}\sin\frac{k\pi}{l}x
+        \end{equation}
+        因此
+        \begin{equation}   \label{B的解}
+            B_k=\frac{2}{k\pi a}\int_0^l\psi(x)\sin\frac{k\pi}{l}xdx \qquad (k=1,2,\cdots)
+        \end{equation}
+        将$A_k$及$B_k$代回解(\ref{偏微分方程的解1})即可得到问题(\ref{偏微分方程})的形式解。
+
+        下面我们研究上述解应该满足什么条件，如果将解(\ref{偏微分方程的解1})代回方程(\ref{偏微分方程})中，我们发现形式解是在假设无穷级数与求导运算可以交换的前提下得到的;要满足这一条件,必须论证:(1)级数(\ref{偏微分方程的解1})是一致收敛的;(2)允许级数(\ref{偏微分方程的解1})关于$x,t$可以逐项两次求导，即需要证明
+        \begin{equation*}
+            \sum_{k=1}^{\infty}\frac{\partial u_k(x,t)}{\partial t},  \quad \sum_{k=1}^{\infty}\frac{\partial^2u_k(x,t)}{\partial t^2}, \quad \sum_{k=1}^{\infty}\frac{\partial u_k(x,t)}{\partial x}, \quad \sum_{k=1}^{\infty}\frac{\partial^2u_k(x,t)}{\partial x^2}
+        \end{equation*}
+        一致收敛。根据魏尔斯特拉斯判别法,我们只需证明上述级数所对应的优级数收敛即可。通过三角不等式可以得到其优级数为
+        \begin{equation}  \label{形式解的优级数}
+            \sum_{k=1}^{\infty} k^{m}( |A_k| + |B_k| ).
+        \end{equation}
+        显然,此处$m$取值为0,1,2。为证明(\ref{形式解的优级数})收敛,我们给出下面的定理
+        \begin{定理}
+            设 \( f(x) \)为\([0,\pi]\)上的连续函数,它的\( m \)阶导数连续,\( m+1\)阶导数分段连续,且\( f^{(k)}(0)=f^{(k)}(l)=0(k=0,2,\ldots,2\lfloor m/2\rfloor)\)。将 \( f(x) \)在 \([0,\pi]\) 上展开成傅里叶正弦级数
+            \[
+                f(x)=\sum_{k=1}^{\infty} a_k \sin \frac{k\pi}{l} x
+            \]
+            则级数 \(\sum_{k=1}^{\infty} k^{m}|a_k|\) 收敛（对余弦级数展开有相同的结论）。
+        \end{定理}
+        \begin{proof}
+            由于$f(x)$可以展开成傅里叶正弦级数
+            \begin{equation*}
+                f(x)=\sum_{k=1}^{\infty} a_k \sin \frac{k\pi}{l} x
+            \end{equation*}
+            因此当 $m$ 为奇数时，可以将 $f^{(m+1)}(x)$ 展开成正弦级数。
+            $$ f^{(m+1)}(x)= \sum_{k=1}^{\infty} a_k^{(m+1)} \sin \frac{k\pi }{l}x $$
+            其中
+            \begin{equation*}
+                a_k^{(m+1)}=\frac{l}{2}\int_{0}^{l}f^{(m+1)}(x)\sin\frac{k\pi}{l}xdx\quad k\geqslant1
+            \end{equation*}
+            类似地，当 $m$ 为偶数时展开成余弦级数
+            $$ f^{(m+1)}(x)= \frac{b_0^{(m+1)}}{2} + \sum_{k=1}^{\infty} b_k^{(m+1)} \cos \frac{k\pi }{l}x $$
+            其中
+            \begin{equation*}
+                b_k^{(m+1)}=\frac{l}{2}\int_{0}^{l}f^{(m+1)}(x)\cos\frac{k\pi}{l}xdx\quad k\geqslant0
+            \end{equation*}
+            由于函数及其导函数在$[0,\pi]$上连续，因此根据定理\ref{贝塞瓦尔等式} 有
+            \begin{equation}  \label{f导数的贝塞瓦尔等式1}
+                \sum_{k=1}^{\infty}\left(a_k^{(m+1)}\right)^2 = \frac{2}{l} \int_0^l \left[f^{(m+1)}(x)\right]^2 dx
+            \end{equation}
+            以及
+            \begin{equation}\label{f导数的贝塞瓦尔等式2}
+                \frac{1}{2}\left(b_0^{(m+1)}\right)^2+\sum_{k=1}^{\infty}\left(b_k^{(m+1)}\right)^2 = \frac{2}{l} \int_0^l \left[f^{(m+1)}(x)\right]^2 dx
+            \end{equation}
+            
+            当 $m$ 为奇数时
+            \begin{align*}
+                a_{k}^{(m+1)} &= \frac{2}{l}\int_0^lf^{(m+1)}(x)\sin\frac{k\pi}{l}xdx\\
+                &=-\frac{2}{l}\left(\frac{k\pi}{l}\right)^2\int_0^lf^{(m-1)}(x)\sin\frac{k\pi}{l}xdx
+            \end{align*}
+            由于\( f^{(k)}(0)=f^{(k)}(l)=0(k=0,2,\ldots,2\lfloor m/2\rfloor)\)，因此用两次分部积分即可得到上述积分，上面的结论即为$a_{k}^{(m+1)}=-\left(\frac{k\pi}{l}\right)^2a_k^{(m-1)}$，将上述积分递推下去可得
+            $$a_{k}^{(m+1)}=(-1)^{\frac{m+1}{2}}\left(\frac{k\pi}{l}\right)^{m+1}\frac{2}{l}\int_0^lf(x)\sin\frac{k\pi}{l}xdx=(-1)^{\frac{m+1}{2}}\left(\frac{k\pi}{l}\right)^{m+1}a_k.$$
+            同理, 当 $m$ 为偶数时得到
+            \begin{align*}
+                b_{k}^{(m+1)} &= \frac{2}{l}\int_0^lf^{(m+1)}(x)\cos\frac{k\pi}{l}xdx\\
+                &=-\frac{2}{l}\left(\frac{k\pi}{l}\right)^2\int_0^lf^{(m-1)}(x)\cos\frac{k\pi}{l}xdx
+            \end{align*}
+            这样就得到递推式
+            $$b_{k}^{(m+1)}=(-1)^{\frac{m}{2}}\left(\frac{k\pi}{l}\right)^{m}b_k^{(1)}$$
+            又由于$f(0)=f(l)=0$，因此
+            \begin{align*}
+                b_k^{(1)}&=\frac{2}{l}\int_0^lf^{(1)}(x)\cos\frac{k\pi}{l}xdx=\frac{2}{l}\int_0^l\cos\frac{k\pi}{l}xdf(x)\\
+                &=\frac{k\pi}{l}\frac{2}{l}\int_{0}^{l}f(x)\sin\frac{k\pi}{l}xdx=\frac{k\pi}{l}a_k
+            \end{align*}
+            于是我们得到
+            \begin{equation*}
+                b_{k}^{(m+1)}=(-1)^{\frac{m}{2}}\left(\frac{k\pi}{l}\right)^{m+1}a_k
+            \end{equation*}
+            由 式(\ref{f导数的贝塞瓦尔等式1})以及式(\ref{f导数的贝塞瓦尔等式2}) 知
+            \begin{equation*}
+                \sum_{k=1}^\infty\left(a_{k}^{(m+1)}\right)^2<+\infty,\quad\frac{1}{2}\left(b_0^{(m+1)}\right)^2+\sum_{k=1}^\infty\left(b_{k}^{(m+1)}\right)^2<+\infty
+            \end{equation*}
+            即得$\displaystyle\sum_{k=1}^\infty\left[\left(\frac{k\pi}{l}\right)^{m+1}a_k\right]^2<+\infty$, 故 $\displaystyle\sum_{k=1}^\infty k^{2m+2}|a_k|^2<+\infty$。
+            根据柯西施瓦茨不等式即获得
+            \begin{equation*}
+                \sum_{k=1}^\infty k^{m}|a_k|^2\leqslant\left[\left(\sum_{k=1}^{\infty}\frac{1}{k^2}\right)\cdot\left(\sum_{k=1}^{\infty} k^{2m+2}|a_k|^2\right) \right]^{\frac{1}{2}}<\infty
+            \end{equation*}
+            于是定理得证。\\
+        \end{proof}
+        有了上面的定理，我们就可以考虑优级数(\ref{形式解的优级数})的收敛性了。由于
+        \begin{equation*}
+            A_k=\frac{2}{l}\int_0^l\varphi(x)\sin\frac{k\pi}{l}xdx  \qquad (k=1,2,\cdots)
+        \end{equation*}
+        因此函数$\varphi(x)$需要二阶连续可微，其三阶导函数需要分段连续，且满足$\varphi(0)=\varphi(l)=\varphi''(0)=\varphi''(l)$，则级数$\sum_{k=1}^{\infty}k^2|A_k|$收敛。
+
+        对于函数$\psi(x)$，因为
+        \begin{equation*}
+            B_k=\frac{2}{k\pi a}\int_0^l\psi(x)\sin\frac{k\pi}{l}xdx \qquad (k=1,2,\cdots)
+        \end{equation*}
+        因此$\psi(x)$需满足一阶连续可微，其二阶导数分段连续，$\psi(0)=\psi(l)$，则可以得到级数$\sum_{k=1}^{\infty}k^2|B_k|$收敛。
+        满足上面条件的解被称为古典解，其对函数的要求较为严格，当函数不满足上面的条件时，这时得到的解(\ref{偏微分方程的解1})被称为广义解。
+
+        \subsection{巴塞尔问题}
+        巴塞尔问题是一个著名的数论问题，这个问题首先由皮耶特罗·门戈利在1644年提出，在1735年由28岁的欧拉解决。
+        欧拉在解决巴塞尔问题的过程中使用的泰勒级数展开和无穷级数求和的方法，为后来的数学研究提供了重要的工具。巴塞尔问题也激发了数学家对级数理论、傅里叶级数和黎曼函数等领域的深入研究‌。
+        本小节我们将利用傅里叶级数来解决巴塞尔问题。
+
+        所谓巴塞尔问题是精确计算所有正整数的平方数的倒数之和，即
+        \begin{equation}
+            S=\sum_{n=1}^{\infty}\frac{1}{n^2}
+        \end{equation}
+        我们考虑下面函数的傅里叶展开
+        \begin{equation*}
+            f(x)=x^2 \qquad x\in [-\pi,\pi]
+        \end{equation*}
+        上面的函数在定义域上的任意一点的左右极限存在，左右微分存在，因此其Fourier级数在每一点上收敛至函数值。假设该函数的傅里叶级数为
+        \begin{equation}  \label{x^2的傅里叶级数1}
+            f(x)=\frac{a_0}{2}+\sum_{k=1}^{\infty}\left(a_k\cos kx+b_k\sin kx\right)  \qquad x\in [-\pi,\pi]
+        \end{equation}
+        其中
+        \begin{align}
+            a_k&=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\cos kxdx \qquad k=0,1,\cdots\\
+            b_k&=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\sin kxdx \qquad k=1,2,\cdots
+        \end{align}
+        由于$f(x)$是定义域上的偶函数，因此$b_k=0(k=1,2,\cdots)$，我们只需要计算$a_k(k=0,1,\cdots)$即可。
+        我们首先计算$a_0$
+        \begin{align*}
+            a_0&=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)dx =\frac{1}{\pi}\int_{-\pi}^{\pi}x^2dx \\
+            &=\frac{2}{\pi}\int_{0}^{\pi}x^2dx =\frac{2\pi^3}{3}
+        \end{align*}
+        再考虑$k>0$的情况
+        \begin{align*}
+            a_k&=\frac{1}{\pi}\int_{-\pi}^{\pi}x^2\cos kxdx=\frac{2}{\pi}\int_{0}^{\pi}x^2\cos kxdx \\
+            &=\frac{2}{k\pi}\int_{0}^{\pi}x^2d\left(\sin kx\right)=\left.\frac{2}{k\pi}x^2\sin kx\right|_0^\pi-\frac{4}{k\pi}\int_0^\pi x\sin kx dx\\
+            &=\frac{4}{k^2\pi}\int_0^\pi xd\left(\cos kx\right)\\
+            &=\left.\frac{4}{k^2\pi}x\cos kx\right|_0^\pi-\frac{4}{k^2\pi}\int_0^\pi \cos kxdx=(-1)^k\frac{4}{k^2}
+        \end{align*}
+        所以(\ref{x^2的傅里叶级数1})可以写为
+        \begin{equation}  \label{x^2的傅里叶级数2}
+            x^2=\frac{\pi^2}{3}+4\sum_{k=1}^{\infty}\frac{(-1)^k}{k^2}\cos kx \qquad x\in [-\pi,\pi]
+        \end{equation}
+        令$x=\pi$，式(\ref{x^2的傅里叶级数2})变为
+        \begin{equation*}
+            \pi^2=\frac{\pi^2}{3}+4\sum_{k=1}^{\infty}\frac{1}{k^2}
+        \end{equation*}
+        化简即为
+        \begin{equation*}
+            \sum_{k=1}^{\infty}\frac{1}{k^2}=\frac{\pi^2}{6}
+        \end{equation*}
+        由此，我们利用傅里叶级数得到了巴塞尔问题的解。
+
+        \newpage
+        \begin{thebibliography}{0}
+            \bibitem{ref1}华东师范大学数学科学学院编. 数学分析. 第5版[M]. 高等教育出版社, 2019.05.
+            \bibitem{ref2}Elias M. Stein \& Rami Shakarchi. Fourier analysis  :an introduction [M]. 世界图书出版社, 2006.
+            \bibitem{ref3}谢惠民 [等] 编. 数学分析习题课讲义. 第2版[M]. 高等教育出版社, 2018.11.
+            \bibitem{ref3}P. du Bois-Reymond, Versuch einer Classification der willk¨urlichen Functionen reeller
+            Argumente nach ihren Aenderungen in den kleinsten Intervallen, J. Reine Angew. Math.
+            79 (1875), 21--37.
+            \bibitem{ref4}Lagarias, J. C. (2011). The takagi function and its properties.https://doi.org/10.48550/arxiv.1112.4205
+            \bibitem{ref5}张鲁明, 王姗姗编. 数学物理方程简明教程[M]. 科学出版社, 2022.06.
+        \end{thebibliography}
+\end{document}

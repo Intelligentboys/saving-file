@@ -1,0 +1,174 @@
+\documentclass[mathserif,compress,cjk]{beamer}
+
+\mode<presentation> {\usetheme{Madrid}}
+
+\usepackage{bm}% bold fonts for matrix and vector
+\usepackage{threeparttable}
+\usepackage{graphicx} % Allows including images
+\usepackage{subfigure} % subfigure
+\DeclareGraphicsRule{*}{mps}{*}{}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage[utf8]{inputenc}
+% input encoding, maybe you want "latin1" or "ansinew"
+\usepackage{setspace}
+\usepackage{amsfonts}
+\usepackage{extarrows}
+\usepackage{epstopdf}
+\usepackage{hyperref}
+\usepackage{amssymb,amsmath,natbib,lineno,setspace,amsthm,algorithm,multirow}
+\usepackage{tikz}
+\usepackage{extarrows}
+
+
+%----------------------------------------------------------------------------------------
+%   TITLE PAGE
+%----------------------------------------------------------------------------------------
+\title[CCBM]{The coupled complex boundary methods for inverse problems of partial differential equations}
+\institute[NUAA]{
+\small{Nanning Normal University, Nanning}}
+\author[R Gong]{Rongfang Gong\\ \vspace{0.2cm}
+Nanjing University of Aeronautics and Astronautics\\
+\small{Joint work with X Cheng, W Han, Q Jin, Y Zhang, W Gong, S Zhu}
+}
+%\date{\today}
+
+\setbeamertemplate{section in toc}{\hspace*{1em}\inserttocsectionnumber.~\inserttocsection\par}
+\setbeamertemplate{subsection in toc}{\hspace*{2em}\inserttocsectionnumber.\inserttocsubsectionnumber.~\inserttocsubsection\par}
+\setbeamerfont{subsection in toc}{size=\small}
+
+
+
+\begin{document}
+	
+	%\begin{frame}
+	%	\titlepage
+	%\end{frame}
+	
+	\begin{frame}
+		\frametitle{Electrical impedance tomography} 
+		Let $D\subset \mathbb{R}^d$ be a bounded domain with smooth boundary, The electrical conductivity of $D$ is represented by a sufficiently smooth and positive function $a(x)$.
+		The equation for the potential is given by
+		\begin{equation} \label{EIT偏微分方程}
+    		\begin{cases}
+        		 -\triangledown \cdot \left(a(x) \triangledown u\right)=0,&\quad x\in D,\\
+        		 u(x)=f(x),&\quad x\in \partial D.
+    		\end{cases}
+		\end{equation}
+		
+		\begin{itemize}
+		\item {\bf The forward problem in EIT can be formulated as}:
+			Given conductivity coefficient $a(x)$ and Dirichlet condition $f(x)$, solve the boundary value problem (\ref{EIT偏微分方程}), and compute the Neumann data
+			\begin{equation*}
+    		g=a \frac{\partial u}{\partial n},\quad x\in \partial D.
+			\end{equation*}
+		\item {\bf The inverse problem in EIT can be formulated as}: 
+			Given D-N map $\varLambda_a$ or data pairs $\{f_i,g_i\}_{i=1}^\infty$, compute the conductivity $a(x)$.
+		\end{itemize}
+	
+
+	\end{frame}
+
+	\begin{frame}
+		\frametitle{Previous work}
+		\begin{block}{Related work}
+			Fan Y, Ying L (Journal of Computational Physics. 2019) proposed compact neural network architectures for the forward and inverse maps for both 2D and 3D EIT problems.
+
+			\vspace{\baselineskip}
+
+		 	Bar L, Sochen N (SIAM J. Imaging Sciences. 2021) introduced a novel neural network-based PDEs solver with application to EIT.
+
+			\vspace{\baselineskip}
+
+			Lu L, et al (Nat Mach Intell. 2021) designed a new network called the deep operator network (DeepONet), which can learn various explicit operators.
+
+			\vspace{\baselineskip}
+
+			Kovachki N, et al (Journal of Machine Learning Research. 2021) introduced the Fourier neural operator (FNO), a deep learning architecture able to learn mappings between infinite-dimensional spaces of functions.
+		\end{block}
+		
+		
+		
+
+	\end{frame}
+
+	\begin{frame}
+		\frametitle{Previous work}
+
+		\begin{block}{Related work}
+
+		 Molinaro R, et al (ICML. 2023) proposed a novel architecture termed Neural Inverse Operator (NIO) to solve EIT inverse problems.
+
+		\vspace{\baselineskip}
+
+		 Castro J, et al (Vietnam Journal of Mathematics. 2024) proved that DtoN operator and the direct and inverse EIT mappings are rigorously approximated by DeepONet.
+
+		\vspace{\baselineskip}
+
+		Wang J, et al (Neural Networks. 2025) highlighted the importance of prior information in solving EIT problems with deep neural networks.
+		\end{block}
+
+	\end{frame}
+
+
+
+
+{\small
+\frame{
+	\frametitle{Neural inverse operators}
+	\begin{itemize}
+		\item The structure of {\bf DeepONet} can be expressed as
+				\begin{equation}  
+        			\mathcal{N}^{\text{DON}}(\bar{u} )(y)=\sum_{k=1}^p \beta_k({\bar{u}})\tau_k(y),\quad \bar{u}\in\mathcal{X}(D),y\in U,
+    			\end{equation}
+				where the branch-net $\beta$ and trunk-net $\tau$ are both neural networks, $\mathcal{X}(D)$ is suitable function spaces and $U\subset\mathbb{R}^{d_u}$ .
+		\item	{\bf FNO} is composed as
+				\begin{equation}
+    				\mathcal{N}^{\text{FNO}}=\mathcal{Q} \circ \mathcal{L}_T\dots \mathcal{L}_1\circ\mathcal{R},
+				\end{equation}
+				where $R$ and $Q$ is represented by a shallow neural network. Each hidden layer $\mathcal{L}_k:v^k(x)\rightarrow v^{k+1}(x)$ is of the form
+				\begin{equation*}
+    				v^{k+1}(x)=\sigma\left(W_k\cdot v^k(x)+b_k(x)+(\mathcal{F}_N^{-1}(P_k(n)\cdot\mathcal{F}_Nv^k(n)))(x)\right),
+				\end{equation*}
+				where $\mathcal{F}_Nv^k(n)$ denotes the Fourier coefficients of the discrete Fourier transform (DFT) of $v^k$; $P_k(n)\in \mathbb{R}^{d_v\times d_v}$ is a complex Fourier multiplication matrix, and $\mathcal{F}_N^{-1}$ denotes the inverse DFT.
+				\end{itemize}
+	
+
+	
+}
+}
+
+
+\frame{
+	\frametitle{Neural inverse operators}
+	The architecture of the {\bf Fully-Connected NIO} can be formulated as 
+	\begin{equation*}
+    	\mathcal{N}^{\text{NIO}}:\left(
+    	    \begin{array}{c}
+    	        z\\
+    	        \{\Psi_l\}_{l=1}^L
+    	    \end{array}
+    	\right)\overset{\tau,\beta}{\mapsto} 
+    	\left(
+    	    \begin{array}{c}
+    	        \{\tau_k (z)\}_{k=1}^p\\
+    	        \{\beta_k \}_{k=1}^p
+    	    \end{array}
+    	\right)\overset{\mathcal{N}^{\text{DON}}}{\mapsto}
+    	\{f_l(z)\}_{l=1}^L
+    	\overset{\mathcal{M}}{\mapsto}
+    	h(z)
+    	\overset{\mathcal{N}^{\text{FNO}}}{\mapsto}
+    	a^*(z)
+	\end{equation*}
+	where $\mathcal{M}$ is a dense fully-connected neural network. The above architecture can be visualized in the figure below.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.95\textwidth]{Neural-inverse-operators.png}
+	\end{figure}
+
+}
+
+
+
+
+\end{document}
